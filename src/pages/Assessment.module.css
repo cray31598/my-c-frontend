@@ -1,0 +1,221 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  background: var(--bg);
+  background-image: radial-gradient(ellipse 120% 80% at 50% -20%, rgba(34, 197, 94, 0.06), transparent 50%);
+}
+
+.loading {
+  font-size: 1rem;
+  color: var(--text-muted);
+}
+
+.card {
+  width: 100%;
+  max-width: 700px;
+  background: var(--bg-elevated);
+  border-radius: 16px;
+  box-shadow: var(--shadow-card);
+  padding: 44px 48px;
+  border: 1px solid var(--border);
+  transition: box-shadow 0.2s ease;
+}
+
+.card:focus-within {
+  box-shadow: var(--shadow-card), 0 0 0 1px var(--border-input);
+}
+
+/* ——— Section header ——— */
+.sectionHeader {
+  margin-bottom: 28px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sectionBadge {
+  display: inline-block;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 10px;
+  padding: 4px 10px;
+  background: var(--success-bg);
+  border-radius: 6px;
+}
+
+.questionnaireTitle {
+  margin: 0 0 8px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+}
+
+.questionnaireDescription {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ——— Progress ——— */
+.progress {
+  margin-bottom: 32px;
+}
+
+.progressText {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.progressTotal {
+  color: var(--text-dim);
+  font-weight: 500;
+}
+
+.progressBar {
+  height: 8px;
+  background: var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--primary-hover) 100%);
+  border-radius: 999px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 12px var(--primary-glow);
+}
+
+/* ——— Question ——— */
+.questionText {
+  margin: 0 0 28px;
+  font-size: 1.3125rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.45;
+  letter-spacing: -0.015em;
+}
+
+/* ——— Answer options ——— */
+.answers {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border: none;
+  padding: 0;
+  margin: 0 0 36px;
+}
+
+.option {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 18px 20px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  background: var(--surface);
+}
+
+.option:hover {
+  border-color: var(--border-input);
+  background: var(--surface-input);
+}
+
+.optionSelected {
+  border-color: var(--primary);
+  background: var(--success-bg);
+  box-shadow: 0 0 0 1px var(--primary);
+}
+
+.optionSelected:hover {
+  border-color: var(--primary);
+  background: var(--success-bg);
+}
+
+.radio {
+  flex-shrink: 0;
+  margin-top: 3px;
+  width: 20px;
+  height: 20px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+.optionText {
+  font-size: 0.9375rem;
+  color: var(--text);
+  line-height: 1.55;
+}
+
+/* ——— Navigation ——— */
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.btnPrev,
+.btnNext {
+  padding: 14px 28px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+}
+
+.btnPrev {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.btnPrev:hover:not(:disabled) {
+  background: var(--surface-input);
+  border-color: var(--border-input);
+  color: var(--text);
+}
+
+.btnPrev:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btnNext {
+  background: var(--primary);
+  color: #fff;
+  border: 1px solid var(--primary);
+}
+
+.btnNext:hover:not(:disabled) {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+  box-shadow: 0 4px 16px var(--primary-glow);
+  transform: translateY(-1px);
+}
+
+.btnNext:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btnNext:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
