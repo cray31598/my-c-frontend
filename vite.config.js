@@ -7,7 +7,14 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 5173,
     strictPort: true,
-    // Avoid proxy issues when VPN is on: use 127.0.0.1 in browser if localhost fails
+    // Proxy /api to backend. Uses 127.0.0.1 so it works with VPN (loopback bypasses VPN).
+    proxy: {
+      '/api': {
+        target: 'https://myproject-backend-roan.vercel.app/',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
     watch: {
       usePolling: false,
     },

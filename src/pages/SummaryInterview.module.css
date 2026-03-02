@@ -14,6 +14,17 @@
   font-weight: 500;
 }
 
+.invalidInvite {
+  text-align: center;
+  padding: 32px;
+}
+
+.invalidInviteText {
+  margin: 0 0 20px;
+  font-size: 1rem;
+  color: var(--error);
+}
+
 .card {
   width: 100%;
   max-width: 720px;
@@ -100,6 +111,13 @@
   font-size: 2.25rem;
   color: var(--text-dim);
   opacity: 0.6;
+}
+
+.warningText {
+  color: var(--error);
+  font-weight: 500;
+  margin: 0 0 12px;
+  text-align: center;
 }
 
 .placeholderSpinner {
@@ -273,6 +291,18 @@
 .btnPrimary:focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
+}
+
+.btnPrimary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btnPrimary:disabled:hover {
+  background: var(--primary);
+  box-shadow: none;
+  transform: none;
 }
 
 .btnSecondary {

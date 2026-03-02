@@ -23,7 +23,7 @@ const GENDERS = [
 const AGREEMENT_TEXT =
   'I agree not to copy code from any source, including colleagues, and will refrain from accessing websites or AI tools for assistance. Additionally, I commit to maintaining the confidentiality of this platform by not copying, sharing, or disclosing any content or questions through any medium or platform. *'
 
-export default function SignUp() {
+export default function SignUp({ canContinue = true, inviteLink }) {
   const navigate = useNavigate()
   const [form, setForm] = useState({
     email: '',
@@ -229,9 +229,19 @@ export default function SignUp() {
               )}
             </div>
 
-            <button type="submit" className={styles.submit}>
+            <button
+              type="submit"
+              className={styles.submit}
+              disabled={!canContinue}
+              title={!canContinue ? 'This invite link is no longer available for new connections.' : undefined}
+            >
               Continue
             </button>
+            {!canContinue && (
+              <p className={styles.continueDisabled}>
+                This invite link is not available for new connections. (Connection limit reached.)
+              </p>
+            )}
           </form>
         </section>
       </div>

@@ -239,3 +239,19 @@
 .submit:active {
   transform: scale(0.99);
 }
+
+.submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.submit:disabled:hover {
+  background: var(--primary);
+}
+
+.continueDisabled {
+  margin-top: 10px;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}

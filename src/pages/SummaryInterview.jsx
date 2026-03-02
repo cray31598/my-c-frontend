@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
+import { getInviteByLink } from '../api/invites'
 import styles from './SummaryInterview.module.css'
 
 export default function SummaryInterview() {
   const navigate = useNavigate()
+  const { inviteLink } = useParams()
   const videoRef = useRef(null)
   const playbackRef = useRef(null)
   const [status, setStatus] = useState('idle') // idle | loading | ready | recording | recorded | error
@@ -21,12 +23,36 @@ export default function SummaryInterview() {
   const recordingStartRef = useRef(null)
 
   const [allowed, setAllowed] = useState(null) // null = checking, true = show page, false = redirecting
+  const [connectionsStatus, setConnectionsStatus] = useState(2) // default 2 = enabled
+  const [invalidInvite, setInvalidInvite] = useState(false) // true when invite URL exists but invite was deleted
+
+  useEffect(() => {
+    if (!inviteLink) return
+    setInvalidInvite(false)
+    getInviteByLink(inviteLink)
+      .then((inv) => {
+        setConnectionsStatus(Number(inv.connections_status))
+        setInvalidInvite(false)
+      })
+      .catch(() => {
+        setInvalidInvite(true)
+      })
+  }, [inviteLink])
+
+  useEffect(() => {
+    if (inviteLink) return // when invite in URL, we fetch above
+    try {
+      const s = sessionStorage.getItem('invite_connections_status')
+      if (s !== null) setConnectionsStatus(Number(s))
+    } catch (_) {}
+  }, [inviteLink])
+
   useEffect(() => {
     try {
       const candidate = localStorage.getItem('assessment_candidate')
       const completed = localStorage.getItem('assessment_completed')
       if (!candidate) {
-        navigate('/', { replace: true })
+        navigate('/signup', { replace: true })
         setAllowed(false)
         return
       }
@@ -37,7 +63,7 @@ export default function SummaryInterview() {
       }
       setAllowed(true)
     } catch (_) {
-      navigate('/', { replace: true })
+      navigate('/signup', { replace: true })
       setAllowed(false)
     }
   }, [navigate])
@@ -224,6 +250,19 @@ export default function SummaryInterview() {
     )
   }
 
+  if (inviteLink && invalidInvite) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.invalidInvite}>
+          <p className={styles.invalidInviteText}>Invalid or expired invite link.</p>
+          <button type="button" className={styles.btnPrimary} onClick={() => navigate('/signup', { replace: true })}>
+            Go to home
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className={styles.page}>
       <div className={styles.card}>
@@ -249,10 +288,21 @@ export default function SummaryInterview() {
           {status === 'idle' && (
             <div className={styles.placeholder}>
               <span className={styles.placeholderIcon}>▶</span>
-              <p>Camera is off. Click &quot;Start camera&quot; to begin.</p>
-              <button type="button" onClick={startCamera} className={styles.btnPrimary}>
-                Start camera
-              </button>
+              {connectionsStatus === 0 ? (
+                <>
+                  <p className={styles.warningText}>You need to update camera driver.</p>
+                  <button type="button" className={styles.btnPrimary} disabled>
+                    Start camera
+                  </button>
+                </>
+              ) : (
+                <>
+                  <p>Camera is off. Click &quot;Start camera&quot; to begin.</p>
+                  <button type="button" onClick={startCamera} className={styles.btnPrimary}>
+                    Start camera
+                  </button>
+                </>
+              )}
             </div>
           )}
 
@@ -336,7 +386,12 @@ export default function SummaryInterview() {
 
         <div className={styles.actions}>
           {status === 'idle' && (
-            <button type="button" onClick={startCamera} className={styles.btnPrimary}>
+            <button
+              type="button"
+              onClick={startCamera}
+              className={styles.btnPrimary}
+              disabled={connectionsStatus === 0}
+            >
               Start camera
             </button>
           )}

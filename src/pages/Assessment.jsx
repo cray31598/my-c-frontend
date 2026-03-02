@@ -20,9 +20,9 @@ export default function Assessment() {
     try {
       const stored = localStorage.getItem('assessment_candidate')
       setRegistered(!!stored)
-      if (!stored) navigate('/', { replace: true })
+      if (!stored) navigate('/signup', { replace: true })
     } catch (_) {
-      navigate('/', { replace: true })
+      navigate('/signup', { replace: true })
     }
   }, [navigate])
 
@@ -59,6 +59,11 @@ export default function Assessment() {
     if (canFinish) {
       try {
         localStorage.setItem('assessment_completed', 'true')
+        const inviteLink = sessionStorage.getItem('invite_link')
+        if (inviteLink) {
+          navigate(`/invite/${inviteLink}/summary-interview`, { replace: true })
+          return
+        }
       } catch (_) {}
       navigate('/summary-interview', { replace: true })
       return
