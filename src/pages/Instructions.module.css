@@ -10,7 +10,7 @@
 }
 
 .wrapper {
-  max-width: 760px;
+  max-width: 960px;
   margin: 0 auto;
 }
 
@@ -23,7 +23,7 @@
     0 0 0 1px rgba(255, 255, 255, 0.03),
     0 12px 48px rgba(0, 0, 0, 0.4),
     0 4px 16px rgba(0, 0, 0, 0.25);
-  padding: 48px 56px 44px;
+  padding: 32px 56px 28px;
   transition: box-shadow 0.25s ease;
   overflow: hidden;
 }
@@ -54,8 +54,8 @@
 .topBar {
   display: flex;
   align-items: center;
-  margin-bottom: 26px;
-  padding-bottom: 22px;
+  margin-bottom: 18px;
+  padding-bottom: 16px;
   border-bottom: 1px solid var(--border);
 }
 
@@ -81,7 +81,7 @@
 }
 
 .subtitle {
-  margin: 0 0 36px;
+  margin: 0 0 24px;
   font-size: 1rem;
   color: var(--text-muted);
   line-height: 1.55;
@@ -92,8 +92,8 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 16px;
-  padding: 32px 40px 32px 28px;
-  margin-bottom: 36px;
+  padding: 24px 40px 24px 28px;
+  margin-bottom: 24px;
   box-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
 }
 
@@ -110,7 +110,7 @@
 .instructionsList li {
   position: relative;
   padding-left: 2.75rem;
-  margin-bottom: 18px;
+  margin-bottom: 12px;
 }
 
 .instructionsList li:last-child {
@@ -149,8 +149,8 @@
 
 /* ——— Agreement ——— */
 .agreement {
-  margin-bottom: 36px;
-  padding: 24px 28px;
+  margin-bottom: 24px;
+  padding: 18px 28px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 14px;

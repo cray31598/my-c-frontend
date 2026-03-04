@@ -105,8 +105,13 @@ export default function InvitePage() {
   }
 
   // Assessment was started in another browser/device — show message (same browser would have redirected above).
+  // Use connections_status === 1 or assessment_started_at so we show the warning even if PATCH was slow (e.g. on Vercel).
+  const statusStarted = Number(invite.connections_status) === 1
+  const hasStartedAt = invite.assessment_started_at != null && String(invite.assessment_started_at).trim() !== ''
+  const notCompleted = Number(invite.connections_status) !== 3
   const startedElsewhere =
-    Number(invite.connections_status) === 1 &&
+    notCompleted &&
+    (statusStarted || hasStartedAt) &&
     sessionStorage.getItem('assessment_started') !== 'true' &&
     localStorage.getItem('assessment_started_invite') !== inviteLink
   if (startedElsewhere) {

@@ -74,62 +74,53 @@ export default function SignUp({ canContinue = true, inviteLink, positionTitle }
       <div className={styles.wrapper}>
         {/* Left: Welcome and pre-assessment instructions (like first image) */}
         <section className={styles.intro}>
-          <h1 className={styles.title}>
-            Let's Get Started — <span className={styles.titleHighlight}>Your Challenge Awaits</span>
-          </h1>
           <p className={styles.introBody}>
-            You've been invited to complete the hiring evaluation. This test is hosted via our
-            secure platform and is designed to help us better understand your skills and potential fit.
+            You have been invited to complete a hiring evaluation. The assessment is delivered through our
+            secure platform and is designed to help us understand your skills and fit for the role.
+          </p>
+          <p className={styles.introBody}>
+            We recommend setting aside approximately <strong>20 minutes</strong> to complete all steps at your own pace.
           </p>
           <div className={styles.metaBox}>
             <div className={styles.metaRow}>
-              <span className={styles.infoLabel}>Date:</span>
+              <span className={styles.infoLabel}>Date</span>
               <span className={styles.infoValue}>
                 {new Date().toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}
               </span>
             </div>
             <div className={styles.metaRow}>
-              <span className={styles.infoLabel}>Position title:</span>
+              <span className={styles.infoLabel}>Position</span>
               <span className={styles.infoValue}>{positionTitle || '—'}</span>
             </div>
           </div>
 
           <div className={styles.noteBox}>
+            <p className={styles.noteLabel}>Note</p>
             <p className={styles.noteText}>
-              <strong>NOTE:</strong> Please take up the test in Incognito window to avoid browser
-              extensions/plugins interference and ensure a seamless test experience.
+              For the best experience, please take the assessment in a private or incognito window to avoid
+              interference from browser extensions and ensure a smooth session.
             </p>
           </div>
 
           <p className={styles.welcomeText}>
-            We hope you have a great time taking
-            this assessment. Answer the questions within this assessment to the best of your ability.
+            We encourage you to answer each question to the best of your ability. Your responses help us
+            get a clear picture of your experience and approach.
           </p>
 
           <h2 className={styles.beforeStartHeading}>
-            Before you start with the assessment, make sure to:
+            Before you begin, please:
           </h2>
           <ul className={styles.beforeStartList}>
-            <li>Take up this assessment on a laptop or desktop rather than on a mobile phone.</li>
-            <li>Close all other applications and browser tabs to ensure no distractions.</li>
-            <li>
-              Block time to start and finish the assessment in one go. Please make sure you are not
-              interrupted.
-            </li>
+            <li>Use a laptop or desktop rather than a mobile device.</li>
+            <li>Close other applications and browser tabs to minimize distractions.</li>
+            <li>Set aside enough time to complete the assessment in one sitting without interruption.</li>
           </ul>
-
-          <p className={styles.allTheBest}>All the best!</p>
-
-          <p className={styles.ruleText}>
-            You can take up this test <strong>anytime</strong> you want. But once you start the
-            test, you must <strong>not leave the assessment page</strong>.
-          </p>
         </section>
 
         {/* Right: Form */}
         <section className={styles.formSection}>
           <p className={styles.formIntro}>
-            Before we start, here is some extra information we need to assess you better.
+            Please provide the following details so we can personalize your assessment experience.
           </p>
 
           <form onSubmit={handleSubmit} className={styles.form} noValidate>
@@ -211,10 +202,9 @@ export default function SignUp({ canContinue = true, inviteLink, positionTitle }
             </div>
 
             <div className={styles.demoSection}>
-              <h3 className={styles.demoTitle}>DEMOGRAPHIC INFORMATION (OPTIONAL)</h3>
+              <h3 className={styles.demoTitle}>Demographic information (optional)</h3>
               <p className={styles.demoDisclaimer}>
-                The following information is kept confidential and will only be used to help us
-                foster a diverse and inclusive community.
+                This information is confidential and used only to support our diversity and inclusion efforts.
               </p>
               <div className={styles.field}>
                 <label htmlFor="gender">Gender</label>

