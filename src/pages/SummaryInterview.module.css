@@ -37,7 +37,7 @@
 }
 
 .header {
-  margin-bottom: 32px;
+  margin-bottom: 28px;
   padding-bottom: 28px;
   border-bottom: 1px solid var(--border);
 }
@@ -69,7 +69,9 @@
   font-size: 0.9375rem;
   color: var(--text-muted);
   line-height: 1.6;
-  max-width: 540px;
+  max-width: 85ch;
+  /* Reserve space for two lines so layout stays stable when text is one line or empty */
+  min-height: 3em;
 }
 
 .completeAssessmentWrap {
@@ -124,7 +126,7 @@
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid var(--border);
-  margin-bottom: 36px;
+  margin-bottom: 28px;
 }
 
 .placeholder {
@@ -345,19 +347,19 @@
 }
 
 .driverHelp {
-  margin-bottom: 32px;
-  padding: 24px;
-  background: var(--bg);
-  border-radius: 12px;
-  border: 1px solid var(--border);
+  margin-top: 28px;
+  margin-bottom: 0;
+  padding: 24px 0 0;
+  border-top: 1px solid var(--border);
+  background: transparent;
 }
 
 .driverHelpLabel {
   display: block;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   font-weight: 600;
-  color: var(--text-muted);
-  margin-bottom: 8px;
+  color: var(--text);
+  margin-bottom: 10px;
 }
 
 .driverHelpSelect {
@@ -366,10 +368,10 @@
   padding: 10px 14px;
   font-size: 0.9375rem;
   color: var(--text);
-  background: var(--bg-elevated);
+  background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  margin-bottom: 16px;
+  border-radius: 10px;
+  margin-bottom: 14px;
   cursor: pointer;
 }
 
@@ -380,7 +382,7 @@
 }
 
 .driverHelpGuide {
-  margin: 0 0 12px;
+  margin: 0 0 14px;
   font-size: 0.9375rem;
   color: var(--text-muted);
   line-height: 1.5;
@@ -397,7 +399,7 @@
   min-width: 0;
   padding: 14px 18px;
   background: #0c0c14;
-  border-radius: 8px;
+  border-radius: 10px;
   border: 1px solid var(--border);
   font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, monospace;
   font-size: 0.875rem;
@@ -414,9 +416,9 @@
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--text);
-  background: var(--bg-elevated);
+  background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
   transition: border-color 0.15s, background 0.15s;
 }
@@ -437,6 +439,7 @@
   flex-wrap: wrap;
   gap: 14px;
   align-items: center;
+  margin-bottom: 28px;
 }
 
 .btnPrimary,

