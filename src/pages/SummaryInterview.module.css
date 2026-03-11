@@ -347,31 +347,151 @@
 }
 
 .driverHelp {
-  margin-top: 28px;
+  margin-top: 32px;
   margin-bottom: 0;
-  padding: 24px 0 0;
+  padding: 28px 0 0;
   border-top: 1px solid var(--border);
   background: transparent;
 }
 
+.driverHelpTrust {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  background: rgba(34, 197, 94, 0.06);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.driverHelpTrustIcon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(34, 197, 94, 0.12);
+  color: var(--primary);
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.driverHelpTrustText {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.driverHelpToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 14px 20px;
+  margin: 0 0 4px;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  border-radius: 12px;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.driverHelpToggle:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.driverHelpToggle:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+}
+
+.driverHelpToggleLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.driverHelpTitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.driverHelpToggleHint {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.driverHelpArrow {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  color: var(--primary);
+  background: rgba(34, 197, 94, 0.12);
+  border-radius: 8px;
+  transition: transform 0.2s ease, background 0.15s ease;
+}
+
+.driverHelpToggle:hover .driverHelpArrow {
+  background: rgba(34, 197, 94, 0.2);
+}
+
+.driverHelpContent {
+  overflow: hidden;
+}
+
+.driverHelpContent[hidden] {
+  display: none;
+}
+
+.driverHelpContentInner {
+  padding: 4px 0 0;
+}
+
+.driverHelpOsRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
 .driverHelpLabel {
-  display: block;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--text);
-  margin-bottom: 10px;
+  color: var(--text-muted);
+  margin: 0;
+  letter-spacing: 0.01em;
 }
 
 .driverHelpSelect {
-  width: 100%;
-  max-width: 220px;
+  min-width: 180px;
+  max-width: 240px;
   padding: 10px 14px;
   font-size: 0.9375rem;
   color: var(--text);
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 10px;
-  margin-bottom: 14px;
   cursor: pointer;
 }
 
@@ -381,11 +501,91 @@
   box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
 }
 
-.driverHelpGuide {
-  margin: 0 0 14px;
+.driverHelpSteps {
+  list-style: none;
+  margin: 0 0 28px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.driverHelpStep {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.driverHelpStep:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.driverHelpStepHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.driverHelpStepNum {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 700;
+  border-radius: 6px;
+  line-height: 1;
+}
+
+.driverHelpStepTitle {
   font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.driverHelpStepBody {
+  padding-left: 38px;
+}
+
+.driverHelpStepBody p {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
   color: var(--text-muted);
-  line-height: 1.5;
+}
+
+.driverHelpStepBody kbd {
+  display: inline-block;
+  padding: 2px 6px;
+  font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, monospace;
+  font-size: 0.75rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  margin: 0 1px;
+}
+
+.driverHelpCommandSection {
+  padding-top: 4px;
+}
+
+.driverHelpCommandLabel {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  letter-spacing: 0.01em;
 }
 
 .driverHelpCommandWrap {
@@ -397,41 +597,44 @@
 .driverHelpCommand {
   flex: 1;
   min-width: 0;
-  padding: 14px 18px;
+  padding: 16px 20px;
   background: #0c0c14;
-  border-radius: 10px;
+  border-radius: 12px;
   border: 1px solid var(--border);
   font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, monospace;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
+  line-height: 1.6;
   color: var(--text);
+  overflow-x: auto;
 }
 
 .driverHelpCommand code {
   color: #86efac;
+  word-break: break-all;
+  white-space: pre-wrap;
 }
 
 .driverHelpCopyBtn {
   flex-shrink: 0;
-  padding: 10px 16px;
+  padding: 12px 20px;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--text);
-  background: var(--bg);
-  border: 1px solid var(--border);
+  color: #0a0a0f;
+  background: var(--primary);
+  border: none;
   border-radius: 10px;
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s;
+  transition: background 0.2s ease, transform 0.1s ease;
 }
 
 .driverHelpCopyBtn:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: var(--primary);
+  background: #4ade80;
+  transform: translateY(-1px);
 }
 
 .driverHelpCopyBtn:focus {
   outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.4);
 }
 
 .actions {

