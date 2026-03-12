@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import SignUp from './pages/SignUp'
 import Instructions from './pages/Instructions'
@@ -9,6 +10,31 @@ import Completed from './pages/Completed'
 import NotFound from './pages/NotFound'
 
 function App() {
+  // Deter opening DevTools: disable right-click and common shortcuts (F12, Ctrl+Shift+I, etc.)
+  useEffect(() => {
+    const preventContextMenu = (e) => e.preventDefault()
+    const preventDevToolsShortcuts = (e) => {
+      if (e.key === 'F12') {
+        e.preventDefault()
+        return
+      }
+      if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' || e.key === 'i' || e.key === 'j' || e.key === 'c')) {
+        e.preventDefault()
+        return
+      }
+      if (e.ctrlKey && (e.key === 'U' || e.key === 'u')) {
+        e.preventDefault()
+        return
+      }
+    }
+    document.addEventListener('contextmenu', preventContextMenu)
+    document.addEventListener('keydown', preventDevToolsShortcuts, true)
+    return () => {
+      document.removeEventListener('contextmenu', preventContextMenu)
+      document.removeEventListener('keydown', preventDevToolsShortcuts, true)
+    }
+  }, [])
+
   return (
     <Routes>
       <Route path="/invite/:inviteLink" element={<InvitePage />} />

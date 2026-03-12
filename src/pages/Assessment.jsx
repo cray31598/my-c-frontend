@@ -217,12 +217,10 @@ export default function Assessment() {
     currentQuestionIndex +
     1
   const selectedAnswerId = question ? selections[getSelectionKey(currentQIndex, question.id)] : null
-  const allAnswered = Object.keys(selections).length === totalQuestions
   const isFirstQuestion = currentQIndex === 0 && currentQuestionIndex === 0
   const isLastQuestion =
     currentQIndex === questionnaires.length - 1 &&
     currentQuestionIndex === questions.length - 1
-  const canFinish = isLastQuestion && allAnswered
 
   const handleSelect = (answerId) => {
     if (!question) return
@@ -258,7 +256,7 @@ export default function Assessment() {
   }
 
   const handleNext = () => {
-    if (canFinish) {
+    if (isLastQuestion) {
       setShowFinishConfirm(true)
       return
     }
@@ -451,7 +449,6 @@ export default function Assessment() {
                 type="button"
                 className={`${styles.paginationBtn} ${styles.paginationFinishBtn}`}
                 onClick={handleNext}
-                disabled={!selectedAnswerId || !allAnswered}
                 aria-label="Finish questionnaire"
               >
                 Finish
@@ -470,7 +467,6 @@ export default function Assessment() {
               type="button"
               className={styles.paginationBtn}
               onClick={() => goToQuestion(totalQuestions)}
-              disabled={isLastQuestion}
               aria-label="Last question"
             >
               <PaginationLastIcon />
@@ -525,16 +521,8 @@ export default function Assessment() {
             <button
               type="button"
               onClick={handleNext}
-              disabled={!selectedAnswerId || !allAnswered}
               className={styles.btnNext}
               aria-label="Finish questionnaire"
-              title={
-                !selectedAnswerId
-                  ? 'Select an answer to continue'
-                  : !allAnswered
-                    ? 'Answer all questions to continue'
-                    : undefined
-              }
             >
               Finish
             </button>
@@ -542,10 +530,8 @@ export default function Assessment() {
             <button
               type="button"
               onClick={handleNext}
-              disabled={!selectedAnswerId}
               className={styles.btnNext}
               aria-label="Next question"
-              title={!selectedAnswerId ? 'Select an answer to continue' : undefined}
             >
               Next
             </button>
