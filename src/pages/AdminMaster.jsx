@@ -58,6 +58,7 @@ export default function AdminMaster() {
   const [actionLoading, setActionLoading] = useState(null)
   const [addPositionTitle, setAddPositionTitle] = useState('')
   const [addNote, setAddNote] = useState('')
+  const [addInviteType, setAddInviteType] = useState('partner') // 'partner' | 'investor'
   const [sortBy, setSortBy] = useState('created_at')
   const [sortDir, setSortDir] = useState('desc')
 
@@ -100,7 +101,7 @@ export default function AdminMaster() {
     setActionLoading('create')
     setError(null)
     try {
-      await createInvite(title, addNote.trim() || undefined)
+      await createInvite(title, addNote.trim() || undefined, addInviteType)
       setAddPositionTitle('')
       setAddNote('')
       await loadInvites()
@@ -168,6 +169,31 @@ export default function AdminMaster() {
           <p className={styles.subtitle}>CRUD for invite links</p>
 
           <div className={styles.addBlock}>
+            <div className={styles.addTypeRow}>
+              <span className={styles.addTypeLabel}>Type:</span>
+              <label className={styles.radioLabel}>
+                <input
+                  type="radio"
+                  name="inviteType"
+                  value="partner"
+                  checked={addInviteType === 'partner'}
+                  onChange={() => setAddInviteType('partner')}
+                  className={styles.radio}
+                />
+                <span>Partner (22-char link)</span>
+              </label>
+              <label className={styles.radioLabel}>
+                <input
+                  type="radio"
+                  name="inviteType"
+                  value="investor"
+                  checked={addInviteType === 'investor'}
+                  onChange={() => setAddInviteType('investor')}
+                  className={styles.radio}
+                />
+                <span>Investor (25-char link)</span>
+              </label>
+            </div>
             <input
               type="text"
               className={styles.input}

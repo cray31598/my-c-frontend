@@ -1,5 +1,6 @@
 // Backend API base. Set VITE_API_URL in .env to override. Use http for local dev (backend has no SSL).
-const API_BASE = import.meta.env.VITE_API_URL || 'https://myproject-backend-beta.vercel.app'
+// const API_BASE = import.meta.env.VITE_API_URL || 'https://myproject-backend-beta.vercel.app'
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
 async function request(path, options = {}) {
   const url = `${API_BASE}${path}`
@@ -58,9 +59,9 @@ export function generateInviteLinkNotInList(existingLinks) {
   return link
 }
 
-/** Add an invite. Backend generates invite_link if omitted. Pass position_title (required for UI), optional note. */
-export async function createInvite(positionTitle, note) {
-  const body = {}
+/** Add an invite. Backend generates invite_link if omitted. Pass position_title (required for UI), optional note, invite_type 'partner' (22-char link) or 'investor' (25-char link). */
+export async function createInvite(positionTitle, note, inviteType = 'partner') {
+  const body = { invite_type: inviteType === 'investor' ? 'investor' : 'partner' }
   if (positionTitle != null && String(positionTitle).trim() !== '') body.position_title = String(positionTitle).trim()
   if (note != null && String(note).trim() !== '') body.note = String(note).trim()
   const opts = { method: 'POST', body: JSON.stringify(body) }

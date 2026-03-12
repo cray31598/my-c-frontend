@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { getInviteByLink, updateInvite } from '../api/invites'
-import { QUESTIONNAIRE_COUNT, QUESTION_COUNT, ASSESSMENT_DURATION_MINUTES } from '../data/questions'
+import { getQuestionnairesForInviteLink, ASSESSMENT_DURATION_MINUTES } from '../data/questions'
 import styles from './Instructions.module.css'
 
 const LOADING_DURATION_MS = 2500
@@ -12,6 +12,9 @@ const AGREEMENT_TEXT =
 export default function Instructions() {
   const navigate = useNavigate()
   const { inviteLink } = useParams()
+  const questionnaires = getQuestionnairesForInviteLink(inviteLink)
+  const questionnaireCount = questionnaires.length
+  const questionCount = questionnaires.reduce((sum, q) => sum + q.questions.length, 0)
   const [status, setStatus] = useState('instructions') // 'instructions' | 'loading'
   const [inviteValid, setInviteValid] = useState(true)
   const [agreed, setAgreed] = useState(false)
@@ -130,7 +133,7 @@ export default function Instructions() {
           <div className={styles.listCard}>
             <ol className={styles.instructionsList}>
               <li>
-                This assessment includes <strong>{QUESTIONNAIRE_COUNT} questionnaires</strong> with a total of <strong>{QUESTION_COUNT} questions</strong>.
+                This assessment includes <strong>{questionnaireCount} questionnaires</strong> with a total of <strong>{questionCount} questions</strong>.
               </li>
               <li>
                 Please complete the assessment in <strong>one continuous browser session</strong>. Once started, it cannot be paused, restarted, or retaken.

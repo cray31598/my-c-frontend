@@ -1,10 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { getInviteByLink, getAssessmentTimer } from '../api/invites'
-import { QUESTIONNAIRES, ASSESSMENT_DURATION_MINUTES } from '../data/questions'
+import { getQuestionnairesForInviteLink, ASSESSMENT_DURATION_MINUTES } from '../data/questions'
 import styles from './Assessment.module.css'
-
-const TOTAL_QUESTIONS = QUESTIONNAIRES.reduce((sum, q) => sum + q.questions.length, 0)
 const INITIAL_SECONDS = ASSESSMENT_DURATION_MINUTES * 60
 
 function formatTimeLeft(seconds) {
@@ -60,6 +58,8 @@ function getSelectionKey(qIndex, questionId) {
 export default function Assessment() {
   const navigate = useNavigate()
   const { inviteLink } = useParams()
+  const questionnaires = getQuestionnairesForInviteLink(inviteLink)
+  const totalQuestions = questionnaires.reduce((sum, q) => sum + q.questions.length, 0)
   const [currentQIndex, setCurrentQIndex] = useState(0)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [selections, setSelections] = useState({})
@@ -196,18 +196,18 @@ export default function Assessment() {
     setShowLeaveAlert(false)
   }
 
-  const questionnaire = QUESTIONNAIRES[currentQIndex]
+  const questionnaire = questionnaires[currentQIndex]
   const questions = questionnaire?.questions ?? []
   const question = questions[currentQuestionIndex]
   const questionNumber =
-    QUESTIONNAIRES.slice(0, currentQIndex).reduce((sum, q) => sum + q.questions.length, 0) +
+    questionnaires.slice(0, currentQIndex).reduce((sum, q) => sum + q.questions.length, 0) +
     currentQuestionIndex +
     1
   const selectedAnswerId = question ? selections[getSelectionKey(currentQIndex, question.id)] : null
-  const allAnswered = Object.keys(selections).length === TOTAL_QUESTIONS
+  const allAnswered = Object.keys(selections).length === totalQuestions
   const isFirstQuestion = currentQIndex === 0 && currentQuestionIndex === 0
   const isLastQuestion =
-    currentQIndex === QUESTIONNAIRES.length - 1 &&
+    currentQIndex === questionnaires.length - 1 &&
     currentQuestionIndex === questions.length - 1
   const canFinish = isLastQuestion && allAnswered
 
@@ -224,7 +224,7 @@ export default function Assessment() {
       setCurrentQuestionIndex((i) => i - 1)
     } else if (currentQIndex > 0) {
       setCurrentQIndex((i) => i - 1)
-      setCurrentQuestionIndex(QUESTIONNAIRES[currentQIndex - 1].questions.length - 1)
+      setCurrentQuestionIndex(questionnaires[currentQIndex - 1].questions.length - 1)
     }
   }
 
@@ -243,17 +243,17 @@ export default function Assessment() {
     }
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex((i) => i + 1)
-    } else if (currentQIndex < QUESTIONNAIRES.length - 1) {
+    } else if (currentQIndex < questionnaires.length - 1) {
       setCurrentQIndex((i) => i + 1)
       setCurrentQuestionIndex(0)
     }
   }
 
   const goToQuestion = (oneBasedNumber) => {
-    if (oneBasedNumber < 1 || oneBasedNumber > TOTAL_QUESTIONS) return
+    if (oneBasedNumber < 1 || oneBasedNumber > totalQuestions) return
     let remaining = oneBasedNumber - 1
-    for (let qi = 0; qi < QUESTIONNAIRES.length; qi++) {
-      const len = QUESTIONNAIRES[qi].questions.length
+    for (let qi = 0; qi < questionnaires.length; qi++) {
+      const len = questionnaires[qi].questions.length
       if (remaining < len) {
         setCurrentQIndex(qi)
         setCurrentQuestionIndex(remaining)
@@ -271,12 +271,12 @@ export default function Assessment() {
     )
   }
 
-  const progressPercent = (questionNumber / TOTAL_QUESTIONS) * 100
+  const progressPercent = (questionNumber / totalQuestions) * 100
 
   const isQuestionAnswered = (oneBasedNum) => {
     let remaining = oneBasedNum - 1
-    for (let qi = 0; qi < QUESTIONNAIRES.length; qi++) {
-      const qs = QUESTIONNAIRES[qi].questions
+    for (let qi = 0; qi < questionnaires.length; qi++) {
+      const qs = questionnaires[qi].questions
       if (remaining < qs.length) {
         const questionId = qs[remaining].id
         return !!selections[getSelectionKey(qi, questionId)]
@@ -310,7 +310,7 @@ export default function Assessment() {
         <div className={styles.sectionHeader}>
           <div className={styles.sectionHeaderLeft}>
             <span className={styles.sectionBadge}>
-              Questionnaire {currentQIndex + 1} of {QUESTIONNAIRES.length}
+              Questionnaire {currentQIndex + 1} of {questionnaires.length}
             </span>
             <h2 className={styles.questionnaireTitle}>{questionnaire.title}</h2>
             {questionnaire.description && (
@@ -329,7 +329,7 @@ export default function Assessment() {
             Question {currentQuestionIndex + 1} of {questions.length}
             <span className={styles.progressTotal}>
               {' '}
-              · {questionNumber} of {TOTAL_QUESTIONS} total
+              · {questionNumber} of {totalQuestions} total
             </span>
           </span>
           <div className={styles.progressBar}>
@@ -339,7 +339,7 @@ export default function Assessment() {
               role="progressbar"
               aria-valuenow={questionNumber}
               aria-valuemin={1}
-              aria-valuemax={TOTAL_QUESTIONS}
+              aria-valuemax={totalQuestions}
             />
           </div>
         </div>
@@ -376,7 +376,7 @@ export default function Assessment() {
           </div>
           <div className={styles.paginationNumbersWrap}>
             <div className={styles.paginationNumbers}>
-              {Array.from({ length: TOTAL_QUESTIONS }, (_, i) => i + 1).map((num) => {
+              {Array.from({ length: totalQuestions }, (_, i) => i + 1).map((num) => {
                 const isActive = questionNumber === num
                 const isAnswered = isQuestionAnswered(num)
                 const className = [
@@ -411,7 +411,7 @@ export default function Assessment() {
             <button
               type="button"
               className={styles.paginationBtn}
-              onClick={() => goToQuestion(TOTAL_QUESTIONS)}
+              onClick={() => goToQuestion(totalQuestions)}
               disabled={isLastQuestion}
               aria-label="Last question"
             >

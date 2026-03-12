@@ -37,6 +37,34 @@
   flex-wrap: wrap;
 }
 
+.addTypeRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  flex-basis: 100%;
+}
+
+.addTypeLabel {
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.radioLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.radioLabel .radio {
+  margin: 0;
+  accent-color: var(--primary);
+}
+
 .addBlock .input {
   flex: 1;
   min-width: 200px;
