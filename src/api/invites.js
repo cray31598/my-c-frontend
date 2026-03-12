@@ -1,6 +1,6 @@
 // Backend API base. Set VITE_API_URL in .env to override. Use http for local dev (backend has no SSL).
-const API_BASE = import.meta.env.VITE_API_URL || 'https://myproject-backend-beta.vercel.app'
-// const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+// const API_BASE = import.meta.env.VITE_API_URL || 'https://myproject-backend-beta.vercel.app'
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
 async function request(path, options = {}) {
   const url = `${API_BASE}${path}`
@@ -31,10 +31,14 @@ export async function getInviteByLink(inviteLink) {
   return data.invite
 }
 
-/** Get real-time assessment timer from backend (seconds_remaining, server_time). */
+/** Get real-time assessment timer from backend (seconds_remaining, seconds_elapsed, server_time). */
 export async function getAssessmentTimer(inviteLink) {
   const data = await request(`/api/invites/${encodeURIComponent(inviteLink)}/timer`)
-  return { seconds_remaining: data.seconds_remaining, server_time: data.server_time }
+  return {
+    seconds_remaining: data.seconds_remaining,
+    seconds_elapsed: data.seconds_elapsed ?? 0,
+    server_time: data.server_time,
+  }
 }
 
 const INVITE_CODE_LENGTH = 22

@@ -245,6 +245,10 @@ export default function SummaryInterview() {
 
   const handleSubmit = async () => {
     if (!inviteLink) return
+    const confirmed = window.confirm(
+      'Please make sure you have answered all questions and completed any required recordings before submitting. Once the assessment is submitted, you may not be able to return and edit your answers.\n\nDo you want to submit now?'
+    )
+    if (!confirmed) return
     setSubmitStatus('submitting')
     setSubmitProgress(0)
     const start = Date.now()
@@ -401,6 +405,18 @@ export default function SummaryInterview() {
 
   return (
     <div className={styles.page}>
+      {submitStatus === 'submitting' && (
+        <div className={styles.submitFullPage} role="status" aria-live="polite" aria-label="Submitting assessment">
+          <div className={styles.submitFullPageContent}>
+            <div className={styles.submitFullPageSpinner} aria-hidden />
+            <p className={styles.submitFullPageTitle}>Submitting your assessment</p>
+            <p className={styles.submitFullPageSubtext}>Please wait while we save your responses and video.</p>
+            <div className={styles.submitFullPageBar}>
+              <div className={styles.submitFullPageBarFill} style={{ width: `${submitProgress}%` }} />
+            </div>
+          </div>
+        </div>
+      )}
       {submitStatus === 'success' && (
         <div className={styles.toastWrap} role="alert" aria-live="polite">
           <div className={styles.toast}>
@@ -419,14 +435,16 @@ export default function SummaryInterview() {
       )}
       <div className={styles.card}>
         <header className={styles.header}>
-          <span className={styles.badge}>Summary Interview</span>
+          <div className={styles.headerTop}>
+            <span className={styles.badge}>Summary Interview</span>
+          </div>
           <h1 className={styles.title}>
             {status === 'recorded' ? 'Review your summary' : 'Record your summary'}
           </h1>
           <p className={styles.subtitle}>
             {status === 'recorded'
               ? 'Play back your recording below. Re-record or download when you’re satisfied.'
-              : 'Record a short video (at least one minute) summarizing your experience and key points from the assessment. Your completed questionnaires and this video summary will be submitted together. When ready, start the camera and begin recording. Note: The invite link will expire within 30 minutes.'}
+              : 'The assessment questionnaire must be submitted together with your video interview. Record a short video (at least one minute) summarizing your experience and key points from the assessment. When ready, start the camera and begin recording.'}
           </p>
         </header>
 
@@ -511,26 +529,6 @@ export default function SummaryInterview() {
 
           {status === 'recorded' && playbackUrl && (
             <div className={styles.previewWrap}>
-              {submitStatus === 'submitting' && (
-                <div className={styles.submitOverlay}>
-                  <div className={styles.circleProgressWrap}>
-                    <svg className={styles.circleProgressSvg} viewBox="0 0 100 100">
-                      <circle className={styles.circleProgressBg} cx="50" cy="50" r="45" />
-                      <circle
-                        className={styles.circleProgressFill}
-                        cx="50"
-                        cy="50"
-                        r="45"
-                        style={{ strokeDasharray: `${(submitProgress / 100) * 283} 283` }}
-                      />
-                    </svg>
-                    <span className={styles.circleProgressLabel}>
-                      {Math.round((submitProgress / 100) * 5)}s
-                    </span>
-                  </div>
-                  <p className={styles.submitOverlayText}>Submitting…</p>
-                </div>
-              )}
               <video
                 ref={playbackRef}
                 src={playbackUrl}

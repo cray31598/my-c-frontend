@@ -95,6 +95,13 @@ export default function InvitePage() {
     )
   }
 
+  // User already finished questionnaire for this invite: go to summary interview
+  try {
+    if (inviteLink && localStorage.getItem('assessment_completed_invite') === inviteLink) {
+      return <Navigate to={`/invite/${inviteLink}/summary-interview`} replace />
+    }
+  } catch (_) {}
+
   // Same browser that started the assessment: redirect to assessment only if invite is not completed.
   const sameBrowserStarted =
     inviteLink &&

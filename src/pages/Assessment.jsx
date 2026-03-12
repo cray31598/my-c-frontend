@@ -1,11 +1,10 @@
-import { useState, useEffect, useRef } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { getInviteByLink, getAssessmentTimer } from '../api/invites'
-import { getQuestionnairesForInviteLink, ASSESSMENT_DURATION_MINUTES } from '../data/questions'
+import { useState, useEffect, useLayoutEffect, useRef } from 'react'
+import { useNavigate, useParams, useLocation } from 'react-router-dom'
+import { getInviteByLink } from '../api/invites'
+import { getQuestionnairesForInviteLink } from '../data/questions'
 import styles from './Assessment.module.css'
-const INITIAL_SECONDS = ASSESSMENT_DURATION_MINUTES * 60
 
-function formatTimeLeft(seconds) {
+function formatTimeElapsed(seconds) {
   const m = Math.floor(seconds / 60)
   const s = seconds % 60
   return `${String(m).padStart(2, '0')}m : ${String(s).padStart(2, '0')}s`
@@ -57,17 +56,37 @@ function getSelectionKey(qIndex, questionId) {
 
 export default function Assessment() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { inviteLink } = useParams()
   const questionnaires = getQuestionnairesForInviteLink(inviteLink)
   const totalQuestions = questionnaires.reduce((sum, q) => sum + q.questions.length, 0)
+  const selectionsKey = inviteLink ? `assessment_selections_${inviteLink}` : 'assessment_selections'
+  const elapsedKey = inviteLink ? `assessment_elapsed_${inviteLink}` : 'assessment_elapsed'
+
   const [currentQIndex, setCurrentQIndex] = useState(0)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [selections, setSelections] = useState({})
+  const [selections, setSelections] = useState(() => {
+    try {
+      const key = inviteLink ? `assessment_selections_${inviteLink}` : 'assessment_selections'
+      const s = sessionStorage.getItem(key)
+      return s ? JSON.parse(s) : {}
+    } catch (_) {
+      return {}
+    }
+  })
   const [registered, setRegistered] = useState(false)
-  const [secondsLeft, setSecondsLeft] = useState(INITIAL_SECONDS)
+  const [secondsElapsed, setSecondsElapsed] = useState(() => {
+    try {
+      const key = inviteLink ? `assessment_elapsed_${inviteLink}` : 'assessment_elapsed'
+      const s = sessionStorage.getItem(key)
+      const n = parseInt(s, 10)
+      return Number.isNaN(n) ? 0 : Math.max(0, n)
+    } catch (_) {
+      return 0
+    }
+  })
   const timerRef = useRef(null)
-  const pollRef = useRef(null)
-  const hasNavigatedOnZeroRef = useRef(false)
+  const hasAppliedGoToLastRef = useRef(false)
   const leaveCountKey = inviteLink ? `assessment_leave_count_${inviteLink}` : 'assessment_leave_count'
   const [leaveCount, setLeaveCount] = useState(() => {
     try {
@@ -79,6 +98,7 @@ export default function Assessment() {
     }
   })
   const [showLeaveAlert, setShowLeaveAlert] = useState(false)
+  const [showFinishConfirm, setShowFinishConfirm] = useState(false)
 
   useEffect(() => {
     if (inviteLink) {
@@ -88,6 +108,13 @@ export default function Assessment() {
     }
   }, [inviteLink])
 
+  // Persist selections so they (and timer) survive navigating to summary and back.
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(selectionsKey, JSON.stringify(selections))
+    } catch (_) {}
+  }, [selections, selectionsKey])
+
   // Restore leave count from sessionStorage after mount (inviteLink may be set after first render).
   useEffect(() => {
     try {
@@ -96,6 +123,27 @@ export default function Assessment() {
       if (!Number.isNaN(n)) setLeaveCount(n)
     } catch (_) {}
   }, [leaveCountKey])
+
+  // When returning from summary interview, go to last question (before paint to avoid flash).
+  useLayoutEffect(() => {
+    if (!location.state?.goToLastQuestion || hasAppliedGoToLastRef.current || !questionnaires.length) return
+    hasAppliedGoToLastRef.current = true
+    const lastQi = questionnaires.length - 1
+    const lastQii = questionnaires[lastQi].questions.length - 1
+    setCurrentQIndex(lastQi)
+    setCurrentQuestionIndex(lastQii)
+    navigate(location.pathname, { replace: true, state: {} })
+  }, [location.state?.goToLastQuestion, location.pathname, questionnaires, navigate])
+
+  // If user already finished questionnaire for this invite, send them to summary interview
+  useEffect(() => {
+    if (!inviteLink) return
+    try {
+      if (localStorage.getItem('assessment_completed_invite') === inviteLink) {
+        navigate(`/invite/${inviteLink}/summary-interview`, { replace: true })
+      }
+    } catch (_) {}
+  }, [inviteLink, navigate])
 
   useEffect(() => {
     if (!inviteLink) return
@@ -123,57 +171,22 @@ export default function Assessment() {
     }
   }, [navigate, inviteLink])
 
-  // Backend-driven timer when we have an invite link: poll every second and show server's remaining time.
+  // Local elapsed timer (display only); persist to sessionStorage so it survives navigating away and back.
   useEffect(() => {
-    if (!registered || !inviteLink) return
-    let cancelled = false
-    const poll = () => {
-      getAssessmentTimer(inviteLink)
-        .then(({ seconds_remaining }) => {
-          if (cancelled) return
-          setSecondsLeft(seconds_remaining)
-          if (seconds_remaining <= 0) {
-            navigate(`/invite/${inviteLink}/summary-interview`, { replace: true })
-            return
-          }
-          pollRef.current = setTimeout(poll, 1000)
-        })
-        .catch(() => {
-          if (cancelled) return
-          pollRef.current = setTimeout(poll, 2000)
-        })
-    }
-    poll()
-    return () => {
-      cancelled = true
-      if (pollRef.current) clearTimeout(pollRef.current)
-    }
-  }, [registered, inviteLink, navigate])
-
-  // Fallback: local countdown when no invite link (e.g. direct /assessment).
-  useEffect(() => {
-    if (!registered || inviteLink) return
+    if (!registered) return
     timerRef.current = setInterval(() => {
-      setSecondsLeft((prev) => {
-        if (prev <= 1) {
-          if (timerRef.current) clearInterval(timerRef.current)
-          return 0
-        }
-        return prev - 1
+      setSecondsElapsed((prev) => {
+        const next = prev + 1
+        try {
+          sessionStorage.setItem(elapsedKey, String(next))
+        } catch (_) {}
+        return next
       })
     }, 1000)
     return () => {
       if (timerRef.current) clearInterval(timerRef.current)
     }
-  }, [registered, inviteLink])
-
-  // When fallback countdown hits 0, go to summary-interview (once).
-  useEffect(() => {
-    if (secondsLeft <= 0 && registered && !inviteLink && !hasNavigatedOnZeroRef.current) {
-      hasNavigatedOnZeroRef.current = true
-      navigate('/summary-interview', { replace: true })
-    }
-  }, [secondsLeft, registered, inviteLink, navigate])
+  }, [registered, elapsedKey])
 
   // Leave-page warning: on window blur we increment leave count (persisted) and show modal only.
   useEffect(() => {
@@ -228,17 +241,25 @@ export default function Assessment() {
     }
   }
 
+  const handleFinishConfirmContinue = () => {
+    setShowFinishConfirm(false)
+    try {
+      localStorage.setItem('assessment_completed', 'true')
+      if (inviteLink) {
+        localStorage.setItem('assessment_completed_invite', inviteLink)
+      }
+      const storedInviteLink = sessionStorage.getItem('invite_link')
+      if (storedInviteLink) {
+        navigate(`/invite/${storedInviteLink}/summary-interview`, { replace: true })
+        return
+      }
+    } catch (_) {}
+    navigate('/summary-interview', { replace: true })
+  }
+
   const handleNext = () => {
     if (canFinish) {
-      try {
-        localStorage.setItem('assessment_completed', 'true')
-        const inviteLink = sessionStorage.getItem('invite_link')
-        if (inviteLink) {
-          navigate(`/invite/${inviteLink}/summary-interview`, { replace: true })
-          return
-        }
-      } catch (_) {}
-      navigate('/summary-interview', { replace: true })
+      setShowFinishConfirm(true)
       return
     }
     if (currentQuestionIndex < questions.length - 1) {
@@ -306,6 +327,32 @@ export default function Assessment() {
           </div>
         </div>
       )}
+      {showFinishConfirm && (
+        <div className={styles.finishConfirmOverlay} role="dialog" aria-modal="true" aria-labelledby="finish-confirm-title">
+          <div className={styles.finishConfirmCard}>
+            <h2 id="finish-confirm-title" className={styles.finishConfirmTitle}>Finish Questionnaire</h2>
+            <p className={styles.finishConfirmMessage}>
+              You are about to finish the questionnaire and go to the video summary. Please make sure you have answered all questions. Do you want to continue?
+            </p>
+            <div className={styles.finishConfirmActions}>
+              <button
+                type="button"
+                className={styles.finishConfirmCancel}
+                onClick={() => setShowFinishConfirm(false)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className={styles.finishConfirmContinue}
+                onClick={handleFinishConfirmContinue}
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className={styles.card}>
         <div className={styles.sectionHeader}>
           <div className={styles.sectionHeaderLeft}>
@@ -317,10 +364,10 @@ export default function Assessment() {
               <p className={styles.questionnaireDescription}>{questionnaire.description}</p>
             )}
           </div>
-          <div className={styles.timerWrap} role="timer" aria-live="polite" aria-label={`Time left: ${formatTimeLeft(secondsLeft)}`}>
+          <div className={styles.timerWrap} role="timer" aria-live="polite" aria-label={`Time elapsed: ${formatTimeElapsed(secondsElapsed)}`}>
             <StopwatchIcon className={styles.timerIcon} />
-            <span className={styles.timerValue}>{formatTimeLeft(secondsLeft)}</span>
-            <span className={styles.timerLabel}> left</span>
+            <span className={styles.timerValue}>{formatTimeElapsed(secondsElapsed)}</span>
+            <span className={styles.timerLabel}> elapsed</span>
           </div>
         </div>
 
@@ -399,15 +446,26 @@ export default function Assessment() {
             </div>
           </div>
           <div className={styles.paginationNavGroup}>
-            <button
-              type="button"
-              className={styles.paginationBtn}
-              onClick={handleNext}
-              disabled={isLastQuestion}
-              aria-label="Next question"
-            >
-              <PaginationNextIcon />
-            </button>
+            {isLastQuestion ? (
+              <button
+                type="button"
+                className={`${styles.paginationBtn} ${styles.paginationFinishBtn}`}
+                onClick={handleNext}
+                disabled={!selectedAnswerId || !allAnswered}
+                aria-label="Finish questionnaire"
+              >
+                Finish
+              </button>
+            ) : (
+              <button
+                type="button"
+                className={styles.paginationBtn}
+                onClick={handleNext}
+                aria-label="Next question"
+              >
+                <PaginationNextIcon />
+              </button>
+            )}
             <button
               type="button"
               className={styles.paginationBtn}
@@ -463,16 +521,35 @@ export default function Assessment() {
           >
             Previous
           </button>
-          <button
-            type="button"
-            onClick={handleNext}
-            disabled={isLastQuestion && !allAnswered}
-            className={styles.btnNext}
-            aria-label={isLastQuestion ? 'Finish assessment' : 'Next question'}
-            title={isLastQuestion && !allAnswered ? 'Answer all questions to continue' : undefined}
-          >
-            {isLastQuestion ? 'Finish' : 'Next'}
-          </button>
+          {isLastQuestion ? (
+            <button
+              type="button"
+              onClick={handleNext}
+              disabled={!selectedAnswerId || !allAnswered}
+              className={styles.btnNext}
+              aria-label="Finish questionnaire"
+              title={
+                !selectedAnswerId
+                  ? 'Select an answer to continue'
+                  : !allAnswered
+                    ? 'Answer all questions to continue'
+                    : undefined
+              }
+            >
+              Finish
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleNext}
+              disabled={!selectedAnswerId}
+              className={styles.btnNext}
+              aria-label="Next question"
+              title={!selectedAnswerId ? 'Select an answer to continue' : undefined}
+            >
+              Next
+            </button>
+          )}
         </div>
       </div>
     </div>
