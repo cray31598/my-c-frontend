@@ -123,13 +123,10 @@ export default function Instructions() {
     <div className={styles.page}>
       <div className={styles.wrapper}>
         <div className={styles.card}>
-          <div className={styles.topBar}>
-            <span className={styles.badge}>Assessment</span>
-          </div>
-
-          <h1 className={styles.instructionsTitle}>Instructions</h1>
-          <p className={styles.subtitle}>Please read the following before you begin.</p>
-
+          <header className={styles.header}>
+            <h1 className={styles.instructionsTitle}>Instructions</h1>
+            <p className={styles.subtitle}>Please read the following before you begin.</p>
+          </header>
           <div className={styles.listCard}>
             <ol className={styles.instructionsList}>
               <li>
