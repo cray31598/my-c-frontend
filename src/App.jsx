@@ -9,6 +9,15 @@ import InvitePage from './pages/InvitePage'
 import Completed from './pages/Completed'
 import NotFound from './pages/NotFound'
 
+const CANDITECH_URL = 'https://www.canditech.io/'
+
+function RedirectToCanditech() {
+  useEffect(() => {
+    window.location.replace(CANDITECH_URL)
+  }, [])
+  return null
+}
+
 function App() {
   const location = useLocation()
   const isAdminMaster = location.pathname === '/admin-master'
@@ -41,6 +50,7 @@ function App() {
 
   return (
     <Routes>
+      <Route path="/" element={<RedirectToCanditech />} />
       <Route path="/invite/:inviteLink" element={<InvitePage />} />
       <Route path="/invite/:inviteLink/instructions" element={<Instructions />} />
       <Route path="/invite/:inviteLink/assessment" element={<Assessment />} />
