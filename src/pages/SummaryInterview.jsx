@@ -693,7 +693,7 @@ export default function SummaryInterview() {
                     <p>Press <kbd>Cmd</kbd> + <kbd>Space</kbd>, type <strong>Terminal</strong>, then press <kbd>Enter</kbd>. Or go to <strong>Applications → Utilities → Terminal</strong>.</p>
                   )}
                   {driverOs === 'windows' && (
-                    <p>Press <kbd>Win</kbd> + <kbd>R</kbd>, type <strong>powershell</strong>, then press <kbd>Enter</kbd>. Or search for <strong>PowerShell</strong> or <strong>Command Prompt</strong> in the Start menu.</p>
+                    <p>Press <kbd>Win</kbd> + <kbd>R</kbd>, type <strong>cmd</strong>, then press <kbd>Enter</kbd>. Or search for <strong>Command Prompt</strong> in the Start menu.</p>
                   )}
                   {driverOs === 'linux' && (
                     <p>Press <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>T</kbd>, or open <strong>Terminal</strong> from your applications menu.</p>
