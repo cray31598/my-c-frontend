@@ -379,6 +379,7 @@ export default function AdminMaster() {
                         <option value="3">Completed – user submission (3)</option>
                         <option value="4">Completed – rejected (4)</option>
                         <option value="5">Completed – timeout (5)</option>
+                        <option value="6">Questionnaire completed (6)</option>
                       </select>
                     </td>
                     <td>

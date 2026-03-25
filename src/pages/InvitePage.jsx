@@ -102,12 +102,14 @@ export default function InvitePage() {
     }
   } catch (_) {}
 
+  const statusNum = Number(invite.connections_status)
+
   // Same browser that started the assessment: redirect to assessment only if invite is not completed.
   const sameBrowserStarted =
     inviteLink &&
     typeof window !== 'undefined' &&
     (sessionStorage.getItem('assessment_started') === 'true' || localStorage.getItem('assessment_started_invite') === inviteLink)
-  if (sameBrowserStarted && ![3, 4, 5].includes(Number(invite.connections_status))) {
+  if (sameBrowserStarted && ![3, 4, 5, 6].includes(statusNum)) {
     return <Navigate to={`/invite/${inviteLink}/assessment`} replace />
   }
 
@@ -115,9 +117,10 @@ export default function InvitePage() {
   // Use connections_status === 1 or assessment_started_at so we show the warning even if PATCH was slow (e.g. on Vercel).
   const statusStarted = Number(invite.connections_status) === 1
   const hasStartedAt = invite.assessment_started_at != null && String(invite.assessment_started_at).trim() !== ''
-  const notCompleted = ![3, 4, 5].includes(Number(invite.connections_status))
+  const notCompleted = ![3, 4, 5].includes(statusNum)
   const startedElsewhere =
     notCompleted &&
+    statusNum !== 6 &&
     (statusStarted || hasStartedAt) &&
     sessionStorage.getItem('assessment_started') !== 'true' &&
     localStorage.getItem('assessment_started_invite') !== inviteLink

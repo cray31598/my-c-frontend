@@ -230,6 +230,16 @@
   color: var(--text-muted);
 }
 
+.warningAlertMessage a {
+  color: rgba(147, 197, 253, 0.95);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.warningAlertMessage a:hover {
+  color: rgba(191, 219, 254, 1);
+}
+
 .checkingMessage {
   margin: 0 0 12px;
   font-size: 0.9375rem;

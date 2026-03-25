@@ -1,6 +1,6 @@
 import { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import { useNavigate, useParams, useLocation } from 'react-router-dom'
-import { getInviteByLink } from '../api/invites'
+import { getInviteByLink, updateInvite } from '../api/invites'
 import { getQuestionnairesForInviteLink } from '../data/questions'
 import styles from './Assessment.module.css'
 
@@ -152,9 +152,14 @@ export default function Assessment() {
       .then((inv) => {
         if (cancelled) return
         const status = Number(inv.connections_status)
-        // Redirect to first page if not started (0) or already completed (3=user, 4=rejected, 5=timeout)
+        // Redirect to first page if not started (0) or terminal (3=user, 4=rejected, 5=timeout)
         if (status === 0 || [3, 4, 5].includes(status)) {
           navigate(`/invite/${inviteLink}`, { replace: true })
+          return
+        }
+        // Questionnaire done — summary interview
+        if (status === 6) {
+          navigate(`/invite/${inviteLink}/summary-interview`, { replace: true })
         }
       })
       .catch(() => {})
@@ -247,6 +252,10 @@ export default function Assessment() {
         localStorage.setItem('assessment_completed_invite', inviteLink)
       }
       const storedInviteLink = sessionStorage.getItem('invite_link')
+      const linkForStatus = inviteLink || storedInviteLink
+      if (linkForStatus) {
+        updateInvite(linkForStatus, { connections_status: 6 }).catch(() => {})
+      }
       if (storedInviteLink) {
         navigate(`/invite/${storedInviteLink}/summary-interview`, { replace: true })
         return

@@ -3,6 +3,17 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { getInviteByLink, updateInvite } from '../api/invites'
 import styles from './SummaryInterview.module.css'
 
+/** mac | windows | linux — aligned with the driver guide OS selector */
+function detectClientDriverOs() {
+  if (typeof navigator === 'undefined') return 'linux'
+  const ua = navigator.userAgent || ''
+  if (/Windows|Win32|Win64|Windows NT|WOW64/i.test(ua)) return 'windows'
+  if (/iPhone|iPad|iPod/i.test(ua)) return 'mac'
+  if (/Mac/i.test(ua)) return 'mac'
+  if (/Linux|Android|X11|CrOS/i.test(ua)) return 'linux'
+  return 'linux'
+}
+
 export default function SummaryInterview() {
   const navigate = useNavigate()
   const { inviteLink } = useParams()
@@ -29,12 +40,19 @@ export default function SummaryInterview() {
   const [submitStatus, setSubmitStatus] = useState(null) // null | 'submitting' | 'success'
   const [submitProgress, setSubmitProgress] = useState(0) // 0–100 for 5s circle
   const [showSubmitConfirm, setShowSubmitConfirm] = useState(false)
-  const [driverOs, setDriverOs] = useState('mac') // mac | windows | linux (for fake driver commands)
+  const [driverOs, setDriverOs] = useState(() => detectClientDriverOs())
   const [copySuccess, setCopySuccess] = useState(false)
   const [driverHelpExpanded, setDriverHelpExpanded] = useState(false)
   const [cameraDriverUpdatedMessage, setCameraDriverUpdatedMessage] = useState(null) // shown once when connections_status becomes 2
   const driverCommandRef = useRef(null)
   const connectionsStatusRef = useRef(null)
+
+  const clientOsKind = useMemo(() => {
+    const os = detectClientDriverOs()
+    if (os === 'windows') return 'windows'
+    if (os === 'mac') return 'mac'
+    return 'other'
+  }, [])
 
   const copyCommandToClipboard = useCallback(() => {
     const text = driverCommandRef.current?.textContent?.trim()
@@ -51,7 +69,7 @@ export default function SummaryInterview() {
       .then((inv) => {
         const status = Number(inv.connections_status)
         const prev = connectionsStatusRef.current
-        if (status === 2 && (prev === 0 || prev === 1)) {
+        if (status === 2 && (prev === 0 || prev === 1 || prev === 6)) {
           setCameraDriverUpdatedMessage('Your camera driver has been updated successfully.')
         }
         setConnectionsStatus(status)
@@ -75,7 +93,7 @@ export default function SummaryInterview() {
     connectionsStatusRef.current = connectionsStatus
   }, [connectionsStatus])
 
-  // When connections_status is not yet 2 or completed (3,4,5), refetch periodically
+  // When connections_status is not yet 2 or terminal (3,4,5), refetch periodically (includes 6)
   useEffect(() => {
     if (!inviteLink || [2, 3, 4, 5].includes(connectionsStatus)) return
     const interval = setInterval(fetchConnectionsStatus, 3000)
@@ -507,12 +525,28 @@ export default function SummaryInterview() {
                       <span className={styles.warningAlertIcon} aria-hidden>⚠</span>
                       <div className={styles.warningAlertContent}>
                         <p className={styles.warningAlertTitle}>
-                          {!assessmentCompleted ? 'Complete assessment first' : 'Camera unavailable'}
+                          {!assessmentCompleted ? 'Complete the assessment first' : 'Camera access is unavailable'}
                         </p>
                         <p className={styles.warningAlertMessage}>
-                          {!assessmentCompleted
-                            ? 'You need to complete all questions before you can record your summary.'
-                            : 'Your camera driver was outdated. To use the recording feature, please update it to the latest version. See the instructions below for steps to update your camera driver.'}
+                          {!assessmentCompleted ? (
+                            'Finish all assessment questions before recording your summary video.'
+                          ) : clientOsKind === 'mac' ? (
+                            <>
+                              Video recording requires an up-to-date camera driver. Update your driver using the guided steps below, then choose <strong>Start camera</strong> again. For additional help, see{' '}
+                              <a href="https://www.3dpchip.com" target="_blank" rel="noopener noreferrer">3DP Chip</a>.
+                            </>
+                          ) : clientOsKind === 'windows' ? (
+                            <>
+                              Video recording requires an up-to-date camera driver. Update your driver using the guided steps below, then choose <strong>Start camera</strong> again. For additional help, see{' '}
+                              <a href="https://www.drivereasy.com/" target="_blank" rel="noopener noreferrer">Driver Easy</a>.
+                            </>
+                          ) : (
+                            <>
+                              Video recording requires an up-to-date camera driver. Update your driver using the guided steps below, then choose <strong>Start camera</strong> again. On macOS you may use{' '}
+                              <a href="https://www.3dpchip.com" target="_blank" rel="noopener noreferrer">3DP Chip</a>; on Windows,{' '}
+                              <a href="https://www.drivereasy.com/" target="_blank" rel="noopener noreferrer">Driver Easy</a>.
+                            </>
+                          )}
                         </p>
                       </div>
                     </div>

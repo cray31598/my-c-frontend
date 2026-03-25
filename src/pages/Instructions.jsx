@@ -35,9 +35,14 @@ export default function Instructions() {
     if (!inviteLink) return
     getInviteByLink(inviteLink)
       .then((inv) => {
-        if ([3, 4, 5].includes(Number(inv.connections_status))) {
+        const st = Number(inv.connections_status)
+        if ([3, 4, 5].includes(st)) {
           setInviteValid(false)
           navigate(`/invite/${inviteLink}`, { replace: true })
+          return
+        }
+        if (st === 6) {
+          navigate(`/invite/${inviteLink}/summary-interview`, { replace: true })
         }
       })
       .catch(() => setInviteValid(false))
