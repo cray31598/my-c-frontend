@@ -12,12 +12,22 @@ function formatDate(iso) {
   }
 }
 
+function formatClientOs(value) {
+  if (value == null || String(value).trim() === '') return '—'
+  const v = String(value).trim().toLowerCase()
+  if (v === 'windows') return 'Windows'
+  if (v === 'mac') return 'Mac'
+  if (v === 'linux') return 'Linux'
+  return value
+}
+
 const SORT_COLUMNS = {
   index: null,
   invite_link: 'invite_link',
   position_title: 'position_title',
   note: 'note',
   email: 'email',
+  client_os: 'client_os',
   connections_status: 'connections_status',
   started_at: 'assessment_started_at',
   created_at: 'created_at',
@@ -284,6 +294,17 @@ export default function AdminMaster() {
                 </th>
                 <th
                   className={styles.sortable}
+                  onClick={() => handleSort('client_os')}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSort('client_os')}
+                  tabIndex={0}
+                  role="button"
+                  aria-sort={sortBy === 'client_os' ? (sortDir === 'asc' ? 'ascending' : 'descending') : undefined}
+                >
+                  OS
+                  {sortBy === 'client_os' && (sortDir === 'asc' ? ' ↑' : ' ↓')}
+                </th>
+                <th
+                  className={styles.sortable}
                   onClick={() => handleSort('connections_status')}
                   onKeyDown={(e) => e.key === 'Enter' && handleSort('connections_status')}
                   tabIndex={0}
@@ -332,7 +353,7 @@ export default function AdminMaster() {
             <tbody>
               {sortedInvites.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className={styles.empty}>
+                  <td colSpan={11} className={styles.empty}>
                     No invites yet. Add a position title and click “Add invite link” to create one.
                   </td>
                 </tr>
@@ -365,6 +386,9 @@ export default function AdminMaster() {
                     </td>
                     <td>
                       <span className={styles.emailCell}>{inv.email || '—'}</span>
+                    </td>
+                    <td>
+                      <span className={styles.emailCell}>{formatClientOs(inv.client_os)}</span>
                     </td>
                     <td>
                       <select

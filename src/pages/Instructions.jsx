@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { getInviteByLink, updateInvite } from '../api/invites'
+import { detectClientOs } from '../utils/clientOs'
 import { getQuestionnairesForInviteLink, ASSESSMENT_DURATION_MINUTES } from '../data/questions'
 import styles from './Instructions.module.css'
 
@@ -80,7 +81,11 @@ export default function Instructions() {
     let cancelled = false
     let navTimeoutId = null
     const doUpdate = () =>
-      updateInvite(inviteLink, { connections_status: 1, assessment_started_at: new Date().toISOString() })
+      updateInvite(inviteLink, {
+        connections_status: 1,
+        assessment_started_at: new Date().toISOString(),
+        client_os: detectClientOs(),
+      })
     const withTimeout = (p, ms) =>
       Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms))])
     const scheduleNav = () => {

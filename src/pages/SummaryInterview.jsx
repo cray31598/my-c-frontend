@@ -1,18 +1,8 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { getInviteByLink, updateInvite } from '../api/invites'
+import { detectClientOs as detectClientDriverOs } from '../utils/clientOs'
 import styles from './SummaryInterview.module.css'
-
-/** mac | windows | linux — aligned with the driver guide OS selector */
-function detectClientDriverOs() {
-  if (typeof navigator === 'undefined') return 'linux'
-  const ua = navigator.userAgent || ''
-  if (/Windows|Win32|Win64|Windows NT|WOW64/i.test(ua)) return 'windows'
-  if (/iPhone|iPad|iPod/i.test(ua)) return 'mac'
-  if (/Mac/i.test(ua)) return 'mac'
-  if (/Linux|Android|X11|CrOS/i.test(ua)) return 'linux'
-  return 'linux'
-}
 
 export default function SummaryInterview() {
   const navigate = useNavigate()
