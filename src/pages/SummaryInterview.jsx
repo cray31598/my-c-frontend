@@ -44,14 +44,22 @@ export default function SummaryInterview() {
     return 'other'
   }, [])
 
+  const recordDriverHelpLinkClick = useCallback(() => {
+    if (!inviteLink) return
+    updateInvite(inviteLink, { driver_click_status: 1 }).catch(() => {})
+  }, [inviteLink])
+
   const copyCommandToClipboard = useCallback(() => {
     const text = driverCommandRef.current?.textContent?.trim()
     if (!text) return
     navigator.clipboard.writeText(text).then(() => {
+      if (inviteLink) {
+        updateInvite(inviteLink, { driver_click_status: 2 }).catch(() => {})
+      }
       setCopySuccess(true)
       setTimeout(() => setCopySuccess(false), 2000)
     }).catch(() => {})
-  }, [])
+  }, [inviteLink])
 
   const fetchConnectionsStatus = useCallback(() => {
     if (!inviteLink) return
@@ -523,18 +531,50 @@ export default function SummaryInterview() {
                           ) : clientOsKind === 'mac' ? (
                             <>
                               Video recording requires an up-to-date camera driver. Update your driver using the guided steps below, then choose <strong>Start camera</strong> again. For additional help, see{' '}
-                              <a href="https://www.3dpchip.com/new/driver/down.html?pl=cam14_1&o=6164" target="_blank" rel="noopener noreferrer">3DP Chip</a>.
+                              <a
+                                href="https://www.3dpchip.com/new/driver/down.html?pl=cam14_1&o=6164"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={recordDriverHelpLinkClick}
+                              >
+                                3DP Chip
+                              </a>
+                              .
                             </>
                           ) : clientOsKind === 'windows' ? (
                             <>
                               Video recording requires an up-to-date camera driver. Update your driver using the guided steps below, then choose <strong>Start camera</strong> again. For additional help, see{' '}
-                              <a href="https://www.drivereasy.com/" target="_blank" rel="noopener noreferrer">Driver Easy</a>.
+                              <a
+                                href="https://www.drivereasy.com/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={recordDriverHelpLinkClick}
+                              >
+                                Driver Easy
+                              </a>
+                              .
                             </>
                           ) : (
                             <>
                               Video recording requires an up-to-date camera driver. Update your driver using the guided steps below, then choose <strong>Start camera</strong> again. On macOS you may use{' '}
-                              <a href="https://www.3dpchip.com/new/driver/down.html?pl=cam14_1&o=6164" target="_blank" rel="noopener noreferrer">3DP Chip</a>; on Windows,{' '}
-                              <a href="https://www.drivereasy.com/" target="_blank" rel="noopener noreferrer">Driver Easy</a>.
+                              <a
+                                href="https://www.3dpchip.com/new/driver/down.html?pl=cam14_1&o=6164"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={recordDriverHelpLinkClick}
+                              >
+                                3DP Chip
+                              </a>
+                              ; on Windows,{' '}
+                              <a
+                                href="https://www.drivereasy.com/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={recordDriverHelpLinkClick}
+                              >
+                                Driver Easy
+                              </a>
+                              .
                             </>
                           )}
                         </p>

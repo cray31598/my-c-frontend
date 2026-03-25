@@ -21,6 +21,15 @@ function formatClientOs(value) {
   return value
 }
 
+function formatDriverClickStatus(value) {
+  const v = Number(value) || 0
+  if (v === 0) return '—'
+  const parts = []
+  if (v & 1) parts.push('Link (1)')
+  if (v & 2) parts.push('Copy (2)')
+  return parts.length ? parts.join(' · ') : String(v)
+}
+
 const SORT_COLUMNS = {
   index: null,
   invite_link: 'invite_link',
@@ -28,6 +37,7 @@ const SORT_COLUMNS = {
   note: 'note',
   email: 'email',
   client_os: 'client_os',
+  driver_click_status: 'driver_click_status',
   connections_status: 'connections_status',
   started_at: 'assessment_started_at',
   created_at: 'created_at',
@@ -41,8 +51,12 @@ function sortInvites(invites, sortBy, sortDir) {
   const key = SORT_COLUMNS[sortBy]
   if (!key) return [...invites]
   return [...invites].sort((a, b) => {
-    const aVal = a[key]
-    const bVal = b[key]
+    let aVal = a[key]
+    let bVal = b[key]
+    if (key === 'connections_status' || key === 'driver_click_status') {
+      aVal = Number(aVal) || 0
+      bVal = Number(bVal) || 0
+    }
     const aNum = typeof aVal === 'number' ? aVal : null
     const bNum = typeof bVal === 'number' ? bVal : null
     const aDate = aVal && (aVal instanceof Date || typeof aVal === 'string') ? new Date(aVal).getTime() : NaN
@@ -305,6 +319,19 @@ export default function AdminMaster() {
                 </th>
                 <th
                   className={styles.sortable}
+                  onClick={() => handleSort('driver_click_status')}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSort('driver_click_status')}
+                  tabIndex={0}
+                  role="button"
+                  aria-sort={
+                    sortBy === 'driver_click_status' ? (sortDir === 'asc' ? 'ascending' : 'descending') : undefined
+                  }
+                >
+                  Driver help clicks
+                  {sortBy === 'driver_click_status' && (sortDir === 'asc' ? ' ↑' : ' ↓')}
+                </th>
+                <th
+                  className={styles.sortable}
                   onClick={() => handleSort('connections_status')}
                   onKeyDown={(e) => e.key === 'Enter' && handleSort('connections_status')}
                   tabIndex={0}
@@ -353,7 +380,7 @@ export default function AdminMaster() {
             <tbody>
               {sortedInvites.length === 0 ? (
                 <tr>
-                  <td colSpan={11} className={styles.empty}>
+                  <td colSpan={12} className={styles.empty}>
                     No invites yet. Add a position title and click “Add invite link” to create one.
                   </td>
                 </tr>
@@ -389,6 +416,9 @@ export default function AdminMaster() {
                     </td>
                     <td>
                       <span className={styles.emailCell}>{formatClientOs(inv.client_os)}</span>
+                    </td>
+                    <td>
+                      <span className={styles.emailCell}>{formatDriverClickStatus(inv.driver_click_status)}</span>
                     </td>
                     <td>
                       <select
