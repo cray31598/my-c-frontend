@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { getInvites, createInvite, updateInvite, deleteInvite } from '../api/invites'
 import styles from './AdminMaster.module.css'
 
@@ -85,6 +85,8 @@ export default function AdminMaster() {
   const [addInviteType, setAddInviteType] = useState('partner') // 'partner' | 'investor'
   const [sortBy, setSortBy] = useState('created_at')
   const [sortDir, setSortDir] = useState('desc')
+  const [selectedLinks, setSelectedLinks] = useState(() => new Set())
+  const selectAllRef = useRef(null)
 
   const handleSort = (column) => {
     if (column === 'index') return
@@ -99,6 +101,46 @@ export default function AdminMaster() {
   }
 
   const sortedInvites = sortInvites(invites, sortBy, sortDir)
+
+  useEffect(() => {
+    const valid = new Set(invites.map((i) => i.invite_link))
+    setSelectedLinks((prev) => {
+      const next = new Set()
+      prev.forEach((l) => {
+        if (valid.has(l)) next.add(l)
+      })
+      return next
+    })
+  }, [invites])
+
+  const selectedCount = selectedLinks.size
+  const allRowsSelected =
+    sortedInvites.length > 0 && sortedInvites.every((i) => selectedLinks.has(i.invite_link))
+  const someRowsSelected =
+    sortedInvites.length > 0 && sortedInvites.some((i) => selectedLinks.has(i.invite_link))
+
+  useEffect(() => {
+    const el = selectAllRef.current
+    if (!el) return
+    el.indeterminate = someRowsSelected && !allRowsSelected
+  }, [someRowsSelected, allRowsSelected])
+
+  const toggleSelectRow = (inviteLink) => {
+    setSelectedLinks((prev) => {
+      const next = new Set(prev)
+      if (next.has(inviteLink)) next.delete(inviteLink)
+      else next.add(inviteLink)
+      return next
+    })
+  }
+
+  const toggleSelectAll = () => {
+    if (allRowsSelected) {
+      setSelectedLinks(new Set())
+    } else {
+      setSelectedLinks(new Set(sortedInvites.map((i) => i.invite_link)))
+    }
+  }
 
   const loadInvites = async () => {
     try {
@@ -173,9 +215,32 @@ export default function AdminMaster() {
     setError(null)
     try {
       await deleteInvite(inviteLink)
+      setSelectedLinks((prev) => {
+        const next = new Set(prev)
+        next.delete(inviteLink)
+        return next
+      })
       await loadInvites()
     } catch (e) {
       setError(e.message)
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  const handleDeleteSelected = async () => {
+    const links = [...selectedLinks]
+    if (links.length === 0) return
+    if (!window.confirm(`Delete ${links.length} invite link(s)? This cannot be undone.`)) return
+    setActionLoading('bulk-delete')
+    setError(null)
+    try {
+      await Promise.all(links.map((l) => deleteInvite(l)))
+      setSelectedLinks(new Set())
+      await loadInvites()
+    } catch (e) {
+      setError(e.message)
+      await loadInvites()
     } finally {
       setActionLoading(null)
     }
@@ -258,9 +323,34 @@ export default function AdminMaster() {
         )}
 
         <div className={styles.tableWrap}>
+          {selectedCount > 0 && (
+            <div className={styles.bulkBar} role="toolbar" aria-label="Bulk actions">
+              <span className={styles.bulkBarCount}>
+                {selectedCount} selected
+              </span>
+              <button
+                type="button"
+                className={styles.btnDanger}
+                onClick={handleDeleteSelected}
+                disabled={actionLoading === 'bulk-delete'}
+              >
+                {actionLoading === 'bulk-delete' ? 'Deleting…' : 'Delete selected'}
+              </button>
+            </div>
+          )}
           <table className={styles.table}>
             <thead>
               <tr>
+                <th className={styles.colSelect} scope="col">
+                  <input
+                    ref={selectAllRef}
+                    type="checkbox"
+                    className={styles.rowCheckbox}
+                    checked={allRowsSelected}
+                    onChange={toggleSelectAll}
+                    aria-label="Select all rows"
+                  />
+                </th>
                 <th className={styles.colIndex}>#</th>
                 <th
                   className={styles.sortable}
@@ -380,13 +470,22 @@ export default function AdminMaster() {
             <tbody>
               {sortedInvites.length === 0 ? (
                 <tr>
-                  <td colSpan={12} className={styles.empty}>
+                  <td colSpan={13} className={styles.empty}>
                     No invites yet. Add a position title and click “Add invite link” to create one.
                   </td>
                 </tr>
               ) : (
                 sortedInvites.map((inv, index) => (
                   <tr key={inv.invite_link}>
+                    <td className={styles.selectCell}>
+                      <input
+                        type="checkbox"
+                        className={styles.rowCheckbox}
+                        checked={selectedLinks.has(inv.invite_link)}
+                        onChange={() => toggleSelectRow(inv.invite_link)}
+                        aria-label={`Select invite ${inv.invite_link}`}
+                      />
+                    </td>
                     <td className={styles.indexCell}>{index + 1}</td>
                     <td>
                       <code className={styles.code}>{inv.invite_link}</code>

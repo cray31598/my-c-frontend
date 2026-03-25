@@ -168,6 +168,21 @@
   width: 100%;
 }
 
+.bulkBar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-elevated);
+}
+
+.bulkBarCount {
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -223,6 +238,26 @@
 .dateCell {
   font-size: 0.9375rem;
   color: var(--text-muted);
+}
+
+.colSelect {
+  width: 44px;
+  min-width: 44px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.selectCell {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.rowCheckbox {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  cursor: pointer;
+  accent-color: var(--primary);
 }
 
 .colIndex {

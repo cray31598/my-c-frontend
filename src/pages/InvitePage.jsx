@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, Navigate } from 'react-router-dom'
 import { getInviteByLink } from '../api/invites'
+import { clearClientStateForInviteReset } from '../utils/inviteClientReset'
 import SignUp from './SignUp'
 import styles from './InvitePage.module.css'
 
@@ -29,6 +30,9 @@ export default function InvitePage() {
               }
             } catch (_) {}
           } else {
+            if (Number(data.connections_status) === 0) {
+              clearClientStateForInviteReset(inviteLink)
+            }
             setInvite(data)
             setError(null)
             try {
