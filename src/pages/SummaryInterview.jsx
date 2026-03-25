@@ -490,7 +490,7 @@ export default function SummaryInterview() {
           <p className={styles.subtitle}>
             {status === 'recorded'
               ? 'Play back your recording below. Re-record or download when you’re satisfied.'
-              : 'The assessment questionnaire must be submitted together with your video interview. Record a short video (at least one minute) summarizing your experience and key points from the assessment. When ready, start the camera and begin recording.'}
+              : 'We kindly ask you to record a short video (at least one minute) sharing your career journey. This is a required part of your submission, and we appreciate your time and effort.'}
           </p>
         </header>
 

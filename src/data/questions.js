@@ -1,147 +1,161 @@
 /**
- * Three questionnaires for the Partner – Operations & Institutional Services assessment at Anchorage Digital.
- * Anchorage Digital is a leading digital asset platform for institutions (custody, trading, staking, governance, settlement).
- * Role focus: operational delivery, scaling institutional client services, and excellence in a regulated crypto/digital-asset environment.
+ * Partnership (partner link) question set.
+ * 15 single-choice (MCQ) questions with 4 options each.
  */
 export const QUESTIONNAIRES = [
   {
-    id: 'operations-delivery',
-    title: 'Operations & Service Delivery',
-    description: 'Assess your approach to operational delivery, scaling, and efficiency for institutional clients on a digital asset platform.',
+    id: 'partnership',
+    title: 'Questions',
+    description: 'Assess your approach to problem solving, collaboration, priorities, and communication.',
     questions: [
       {
-        id: 1,
-        text: 'When operational demand from institutional clients (custody, settlement, staking) spikes and resources are fixed, how do you respond?',
+        id: '1',
+        text: 'When facing a complex problem, I prefer to:',
         answers: [
-          { id: 'a', text: 'Prioritize by client impact and SLA commitments; document trade-offs and communicate to stakeholders.' },
-          { id: 'b', text: 'Escalate to leadership for additional resourcing or scope adjustment.' },
-          { id: 'c', text: 'Temporarily simplify or defer non-critical workflows to protect core custody and settlement operations.' },
-          { id: 'd', text: 'Coordinate with product and engineering to identify quick automation or process wins.' },
-          { id: 'e', text: 'Implement a triage framework and ensure escalation paths are clear for clients.' },
+          { id: 'a', text: 'Break it down into smaller parts and analyze each one' },
+          { id: 'b', text: 'Ask others for their view first' },
+          { id: 'c', text: 'Trust my gut and decide quickly' },
+          { id: 'd', text: 'Research similar past situations' },
         ],
       },
       {
-        id: 2,
-        text: 'How do you define and maintain service standards and SLAs for institutional clients on a digital asset platform?',
+        id: '2',
+        text: 'How do you ensure you deliver quality work?',
         answers: [
-          { id: 'a', text: 'Base them on client requirements, regulatory expectations (e.g. federally chartered bank standards), and internal capacity; review regularly.' },
-          { id: 'b', text: 'Align with product and compliance on measurable targets and escalation triggers.' },
-          { id: 'c', text: 'Start with industry benchmarks for custody and settlement, then tailor per client segment and document in agreements.' },
-          { id: 'd', text: 'Define clear ownership per workflow (custody, settlement, transactions) and track against KPIs.' },
-          { id: 'e', text: 'Balance stretch goals with operational reality so teams can meet what we promise.' },
+          { id: 'a', text: 'I set clear standards and check my work against them' },
+          { id: 'b', text: 'I rely on feedback from others' },
+          { id: 'c', text: 'I focus on finishing on time' },
+          { id: 'd', text: 'I prioritize what matters most to the goal' },
         ],
       },
       {
-        id: 3,
-        text: 'You identify a scalability bottleneck in custody or settlement workflows for institutional clients. What is your first step?',
+        id: '3',
+        text: 'When asked to suggest new ideas, I typically:',
         answers: [
-          { id: 'a', text: 'Map the current process, quantify the impact, and propose options (process, tech, or capacity).' },
-          { id: 'b', text: 'Partner with engineering and product to assess automation or platform improvements.' },
-          { id: 'c', text: 'Document the gap and risk, then socialize with leadership and relevant teams for a plan.' },
-          { id: 'd', text: 'Implement short-term workarounds while driving a longer-term solution with clear ownership.' },
-          { id: 'e', text: 'Convene cross-functional stakeholders to align on priority and timeline.' },
+          { id: 'a', text: 'Brainstorm several options and build on the best one' },
+          { id: 'b', text: 'Look at what has worked before' },
+          { id: 'c', text: 'Suggest one strong idea I believe in' },
+          { id: 'd', text: "Combine others' ideas in a new way" },
         ],
       },
       {
-        id: 4,
-        text: 'How do you improve efficiency across custody, settlement, and transaction workflows without compromising risk controls in a regulated digital-asset environment?',
+        id: '4',
+        text: 'When you encounter something you don\'t understand, you:',
         answers: [
-          { id: 'a', text: 'Identify repetitive, rule-based steps for automation; keep approval and exception paths human-led.' },
-          { id: 'b', text: 'Streamline handoffs and reduce redundant checks after validating control effectiveness.' },
-          { id: 'c', text: 'Work with compliance to ensure any process change maintains or strengthens controls.' },
-          { id: 'd', text: 'Pilot changes in one workflow or client segment, measure, then scale with documentation.' },
-          { id: 'e', text: 'Balance quick wins with a roadmap that aligns operations, product, and compliance.' },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'institutional-clients',
-    title: 'Institutional Client Operations & Collaboration',
-    description: 'Evaluate how you manage institutional client delivery, onboarding, and cross-functional execution in a remote, high-trust environment.',
-    questions: [
-      {
-        id: 1,
-        text: 'How do you approach onboarding and lifecycle management for new institutional accounts (e.g. banks, asset managers, fintechs)?',
-        answers: [
-          { id: 'a', text: 'Define a clear onboarding playbook with milestones, owners, and client touchpoints; track to completion.' },
-          { id: 'b', text: 'Align with compliance and product early so requirements and timelines are realistic.' },
-          { id: 'c', text: 'Assign a single point of contact and coordinate internal teams behind the scenes.' },
-          { id: 'd', text: 'Set expectations with the client and internal stakeholders; document and review at each stage.' },
-          { id: 'e', text: 'Balance speed with thoroughness; ensure risk and compliance sign-off before go-live.' },
+          { id: 'a', text: 'Look it up or ask someone to learn more' },
+          { id: 'b', text: 'Note it and move on for now' },
+          { id: 'c', text: 'Try to figure it out by experimenting' },
+          { id: 'd', text: 'Discuss it with the team' },
         ],
       },
       {
-        id: 2,
-        text: 'An institutional client escalates a complex operational issue that spans product, compliance, and operations. What do you do?',
+        id: '5',
+        text: 'How do you approach deadlines and priorities?',
         answers: [
-          { id: 'a', text: 'Own the escalation: coordinate the right internal teams, set a response timeline, and keep the client updated.' },
-          { id: 'b', text: 'Gather facts and impact, then convene product, compliance, and operations to agree on a path.' },
-          { id: 'c', text: 'Document the issue and route to the appropriate owners while tracking to resolution.' },
-          { id: 'd', text: 'Communicate with the client on timeline and next steps; drive internal alignment in parallel.' },
-          { id: 'e', text: 'Ensure there is a single owner for the client relationship and a clear escalation path.' },
+          { id: 'a', text: 'I plan my time and stick to the plan' },
+          { id: 'b', text: 'I adjust as new tasks come in' },
+          { id: 'c', text: 'I focus on the most urgent first' },
+          { id: 'd', text: 'I balance flexibility with clear milestones' },
         ],
       },
       {
-        id: 3,
-        text: 'How do you partner with product, compliance, and engineering to improve operational processes while supporting growth and service quality?',
+        id: '6',
+        text: 'When a teammate is struggling, I:',
         answers: [
-          { id: 'a', text: 'Share operational pain points and client feedback; propose solutions and co-own implementation.' },
-          { id: 'b', text: 'Participate in roadmap and design discussions so operations requirements are built in early.' },
-          { id: 'c', text: 'Define clear handoffs and SLAs between teams; run regular syncs to resolve blockers.' },
-          { id: 'd', text: 'Use data (volume, errors, cycle time) to prioritize what to fix or automate first.' },
-          { id: 'e', text: 'Balance client delivery with internal improvement; avoid letting day-to-day firefighting block strategic work.' },
+          { id: 'a', text: 'Listen and try to understand their situation' },
+          { id: 'b', text: 'Offer practical help or resources' },
+          { id: 'c', text: 'Give them space to figure it out' },
+          { id: 'd', text: 'Check in and suggest we work through it together' },
         ],
       },
       {
-        id: 4,
-        text: 'You need to coordinate cross-functional execution across product, compliance, and engineering with a tight deadline. How do you proceed?',
+        id: '7',
+        text: 'I am most motivated when:',
         answers: [
-          { id: 'a', text: 'Clarify roles and dependencies; set a shared timeline and daily or bi-daily check-ins.' },
-          { id: 'b', text: 'Identify the critical path and any regulatory or client commitments; align on those first.' },
-          { id: 'c', text: 'Designate a single point of coordination and ensure escalation paths are clear.' },
-          { id: 'd', text: 'Document decisions and trade-offs so the team can move quickly without re-litigating.' },
-          { id: 'e', text: 'Communicate progress and blockers to stakeholders so expectations stay aligned.' },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'risk-compliance-excellence',
-    title: 'Risk, Compliance & Operational Excellence',
-    description: 'Explore how you handle operational gaps, risk controls, and excellence in a regulated digital-asset and federally chartered environment.',
-    questions: [
-      {
-        id: 1,
-        text: 'How do you identify and address operational gaps and scalability challenges before they impact institutional clients?',
-        answers: [
-          { id: 'a', text: 'Run regular reviews of capacity, error rates, and cycle times; flag trends and plan ahead.' },
-          { id: 'b', text: 'Stay close to client feedback and internal pain points; prioritize fixes with the biggest impact.' },
-          { id: 'c', text: 'Map end-to-end workflows and stress-test them against growth and failure scenarios.' },
-          { id: 'd', text: 'Partner with compliance and risk to ensure controls keep pace with product and scale.' },
-          { id: 'e', text: 'Document gaps and own or assign remediation with clear timelines and accountability.' },
+          { id: 'a', text: 'There are new challenges or chances to learn' },
+          { id: 'b', text: 'I can see the clear impact of my work' },
+          { id: 'c', text: 'I work with a strong team' },
+          { id: 'd', text: 'I have clear goals and autonomy' },
         ],
       },
       {
-        id: 2,
-        text: 'You operate in a regulated digital-asset environment (e.g. federally chartered crypto bank, BitLicense). How do you balance speed of delivery with compliance and risk?',
+        id: '8',
+        text: 'When receiving feedback, I usually:',
         answers: [
-          { id: 'a', text: 'Embed compliance and risk in process design so requirements are met by default.' },
-          { id: 'b', text: 'Document controls and get sign-off before launch; avoid shortcuts that create regulatory or reputational risk.' },
-          { id: 'c', text: 'Work with compliance to clarify what is mandatory vs. flexible; optimize within the guardrails.' },
-          { id: 'd', text: 'Keep an audit trail of decisions and changes so we can demonstrate oversight.' },
-          { id: 'e', text: 'Prioritize client and regulatory commitments; sequence other work around them.' },
+          { id: 'a', text: 'Reflect on it and look for ways to improve' },
+          { id: 'b', text: 'Ask for examples to understand better' },
+          { id: 'c', text: 'Take time to process before responding' },
+          { id: 'd', text: 'Apply it quickly to my next task' },
         ],
       },
       {
-        id: 3,
-        text: 'How do you contribute to operational strategy and long-term planning while managing day-to-day delivery and supporting growth?',
+        id: '9',
+        text: 'In a disagreement with a colleague, I tend to:',
         answers: [
-          { id: 'a', text: 'Reserve time for strategy; tie it to capacity, risk, and client growth so it stays relevant.' },
-          { id: 'b', text: 'Use operational data and client input to shape priorities and roadmap discussions.' },
-          { id: 'c', text: 'Align with leadership on a few strategic themes and drive initiatives in parallel to BAU.' },
-          { id: 'd', text: 'Document current state and target state; break long-term plan into phases with owners.' },
-          { id: 'e', text: 'Balance firefighting with investing in repeatable processes that free capacity for strategy.' },
+          { id: 'a', text: 'Listen first and then share my perspective' },
+          { id: 'b', text: 'Look for common ground and compromise' },
+          { id: 'c', text: 'Focus on the outcome we both want' },
+          { id: 'd', text: 'Suggest we step back and revisit later' },
+        ],
+      },
+      {
+        id: '10',
+        text: 'When my workload increases suddenly, I:',
+        answers: [
+          { id: 'a', text: 'Prioritize and communicate what I can deliver' },
+          { id: 'b', text: 'Work longer hours to meet everything' },
+          { id: 'c', text: 'Ask for help or delegation' },
+          { id: 'd', text: 'Reassess deadlines with stakeholders' },
+        ],
+      },
+      {
+        id: '11',
+        text: 'I learn best when:',
+        answers: [
+          { id: 'a', text: 'I can try things hands-on' },
+          { id: 'b', text: 'I have clear instructions or documentation' },
+          { id: 'c', text: 'I discuss with others' },
+          { id: 'd', text: 'I see examples or demos first' },
+        ],
+      },
+      {
+        id: '12',
+        text: 'When a project fails or is delayed, I:',
+        answers: [
+          { id: 'a', text: 'Focus on what we can learn from it' },
+          { id: 'b', text: 'Look for ways to recover or adjust' },
+          { id: 'c', text: 'Communicate clearly with those affected' },
+          { id: 'd', text: 'Review what went wrong and document it' },
+        ],
+      },
+      {
+        id: '13',
+        text: 'How do you prefer to work with others?',
+        answers: [
+          { id: 'a', text: 'Collaborate closely and share ideas often' },
+          { id: 'b', text: 'Work independently and sync at milestones' },
+          { id: 'c', text: 'A mix of both, depending on the task' },
+          { id: 'd', text: 'Lead when needed and support when not' },
+        ],
+      },
+      {
+        id: '14',
+        text: 'When something is unclear or ambiguous, I:',
+        answers: [
+          { id: 'a', text: 'Ask questions until I understand' },
+          { id: 'b', text: 'Make reasonable assumptions and document them' },
+          { id: 'c', text: 'Look for similar past cases' },
+          { id: 'd', text: 'Propose an approach and get feedback' },
+        ],
+      },
+      {
+        id: '15',
+        text: 'What matters most to you in a role?',
+        answers: [
+          { id: 'a', text: 'Growth and learning' },
+          { id: 'b', text: 'Impact and results' },
+          { id: 'c', text: 'Team and culture' },
+          { id: 'd', text: 'Stability and work-life balance' },
         ],
       },
     ],
@@ -315,10 +329,10 @@ export function getQuestionnairesForInviteLink(inviteLink) {
 export const TOTAL_QUESTIONS_COUNT = QUESTIONNAIRES.reduce((sum, q) => sum + q.questions.length, 0)
 
 /** Display: number of questionnaires (sections). */
-export const QUESTIONNAIRE_COUNT = 3
+export const QUESTIONNAIRE_COUNT = QUESTIONNAIRES.length
 
 /** Display: total number of questions. */
-export const QUESTION_COUNT = 11
+export const QUESTION_COUNT = TOTAL_QUESTIONS_COUNT
 
 /** Assessment duration in minutes (for instructions and timer). */
 export const ASSESSMENT_DURATION_MINUTES = 11

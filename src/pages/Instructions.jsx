@@ -14,7 +14,6 @@ export default function Instructions() {
   const navigate = useNavigate()
   const { inviteLink } = useParams()
   const questionnaires = getQuestionnairesForInviteLink(inviteLink)
-  const questionnaireCount = questionnaires.length
   const questionCount = questionnaires.reduce((sum, q) => sum + q.questions.length, 0)
   const [status, setStatus] = useState('instructions') // 'instructions' | 'loading'
   const [inviteValid, setInviteValid] = useState(true)
@@ -150,8 +149,7 @@ export default function Instructions() {
             <ol className={styles.instructionsList}>
               <li>
                 <span className={styles.listItemBody}>
-                  This assessment includes <strong>{questionnaireCount} questionnaires</strong> with a total of{' '}
-                  <strong>{questionCount} questions</strong>.
+                  This assessment includes <strong>{questionCount} questions</strong>.
                 </span>
               </li>
               <li>
@@ -179,7 +177,7 @@ export default function Instructions() {
               <li className={styles.cameraEmphasisItem}>
                 <span className={styles.listItemBody}>
                   Please ensure your computer has a <strong>connected camera</strong> before starting the assessment, as
-                  the <strong>video summary interview</strong> must be completed after the questionnaire.
+                  the <strong>video summary interview</strong> must be completed after the questions.
                 </span>
               </li>
               <li>

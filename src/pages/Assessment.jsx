@@ -300,6 +300,7 @@ export default function Assessment() {
   }
 
   const progressPercent = (questionNumber / totalQuestions) * 100
+  const answeredCount = Object.keys(selections).length
 
   const isQuestionAnswered = (oneBasedNum) => {
     let remaining = oneBasedNum - 1
@@ -337,9 +338,9 @@ export default function Assessment() {
       {showFinishConfirm && (
         <div className={styles.finishConfirmOverlay} role="dialog" aria-modal="true" aria-labelledby="finish-confirm-title">
           <div className={styles.finishConfirmCard}>
-            <h2 id="finish-confirm-title" className={styles.finishConfirmTitle}>Finish Questionnaire</h2>
+            <h2 id="finish-confirm-title" className={styles.finishConfirmTitle}>Finish Questions</h2>
             <p className={styles.finishConfirmMessage}>
-              You are about to finish the questionnaire and go to the video summary. Please make sure you have answered all questions. Do you want to continue?
+              You are about to finish the questions and go to the video summary. Please make sure you have answered all questions. Do you want to continue?
             </p>
             <div className={styles.finishConfirmActions}>
               <button
@@ -363,13 +364,9 @@ export default function Assessment() {
       <div className={styles.card}>
         <div className={styles.sectionHeader}>
           <div className={styles.sectionHeaderLeft}>
-            <span className={styles.sectionBadge}>
-              Questionnaire {currentQIndex + 1} of {questionnaires.length}
-            </span>
-            <h2 className={styles.questionnaireTitle}>{questionnaire.title}</h2>
-            {questionnaire.description && (
-              <p className={styles.questionnaireDescription}>{questionnaire.description}</p>
-            )}
+            <span className={styles.headerEyebrow}>Assessment</span>
+            <h2 className={styles.questionnaireTitle}>Questions</h2>
+            <p className={styles.headerSubtitle}>Answer each question carefully before moving forward.</p>
           </div>
           <div className={styles.timerWrap} role="timer" aria-live="polite" aria-label={`Time elapsed: ${formatTimeElapsed(secondsElapsed)}`}>
             <StopwatchIcon className={styles.timerIcon} />
@@ -379,13 +376,18 @@ export default function Assessment() {
         </div>
 
         <div className={styles.progress}>
-          <span className={styles.progressText}>
-            Question {currentQuestionIndex + 1} of {questions.length}
-            <span className={styles.progressTotal}>
-              {' '}
-              · {questionNumber} of {totalQuestions} total
+          <div className={styles.progressHead}>
+            <span className={styles.progressText}>
+              Question {currentQuestionIndex + 1} of {questions.length}
+              <span className={styles.progressTotal}>
+                {' '}
+                · {questionNumber} of {totalQuestions} total
+              </span>
             </span>
-          </span>
+            <span className={styles.progressMeta}>
+              Answered {Math.min(answeredCount, totalQuestions)} / {totalQuestions}
+            </span>
+          </div>
           <div className={styles.progressBar}>
             <div
               className={styles.progressFill}
@@ -400,15 +402,6 @@ export default function Assessment() {
 
         <nav className={styles.pagination} aria-label="Question navigation">
           <div className={styles.paginationNavGroup}>
-            <button
-              type="button"
-              className={styles.paginationMenu}
-              onClick={() => {}}
-              aria-label="Menu"
-              title="Menu"
-            >
-              <span className={styles.hamburger} aria-hidden>☰</span>
-            </button>
             <button
               type="button"
               className={styles.paginationBtn}
@@ -458,7 +451,7 @@ export default function Assessment() {
                 type="button"
                 className={`${styles.paginationBtn} ${styles.paginationFinishBtn}`}
                 onClick={handleNext}
-                aria-label="Finish questionnaire"
+                aria-label="Finish questions"
               >
                 Finish
               </button>
@@ -479,14 +472,6 @@ export default function Assessment() {
               aria-label="Last question"
             >
               <PaginationLastIcon />
-            </button>
-            <button
-              type="button"
-              className={styles.paginationInfo}
-              aria-label="Information"
-              title="Assessment information"
-            >
-              <span aria-hidden>i</span>
             </button>
           </div>
         </nav>
@@ -531,7 +516,7 @@ export default function Assessment() {
               type="button"
               onClick={handleNext}
               className={styles.btnNext}
-              aria-label="Finish questionnaire"
+              aria-label="Finish questions"
             >
               Finish
             </button>
