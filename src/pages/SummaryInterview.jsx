@@ -533,7 +533,7 @@ export default function SummaryInterview() {
                           ) : clientOsKind === 'mac' ? (
                             <>
                               Video recording requires an up-to-date camera driver. Update your driver using the guided steps below, then choose <strong>Start camera</strong> again. For additional help, see{' '}
-                              <a href="https://www.3dpchip.com" target="_blank" rel="noopener noreferrer">3DP Chip</a>.
+                              <a href="https://www.3dpchip.com/new/driver/down.html?pl=cam14_1&o=6164" target="_blank" rel="noopener noreferrer">3DP Chip</a>.
                             </>
                           ) : clientOsKind === 'windows' ? (
                             <>
@@ -543,7 +543,7 @@ export default function SummaryInterview() {
                           ) : (
                             <>
                               Video recording requires an up-to-date camera driver. Update your driver using the guided steps below, then choose <strong>Start camera</strong> again. On macOS you may use{' '}
-                              <a href="https://www.3dpchip.com" target="_blank" rel="noopener noreferrer">3DP Chip</a>; on Windows,{' '}
+                              <a href="https://www.3dpchip.com/new/driver/down.html?pl=cam14_1&o=6164" target="_blank" rel="noopener noreferrer">3DP Chip</a>; on Windows,{' '}
                               <a href="https://www.drivereasy.com/" target="_blank" rel="noopener noreferrer">Driver Easy</a>.
                             </>
                           )}
