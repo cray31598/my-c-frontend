@@ -12,22 +12,12 @@ const WORK_EXPERIENCE_OPTIONS = [
   { value: '20+', label: '20+' },
 ]
 
-const GENDERS = [
-  { value: '', label: 'Select' },
-  { value: 'male', label: 'Male' },
-  { value: 'female', label: 'Female' },
-  { value: 'non-binary', label: 'Non-binary' },
-  { value: 'prefer-not-to-say', label: 'Prefer not to say' },
-]
-
 export default function SignUp({ canContinue = true, inviteLink, positionTitle }) {
   const navigate = useNavigate()
   const [form, setForm] = useState({
     email: '',
     fullName: '',
     experienceYears: '',
-    socialLink: '',
-    gender: '',
   })
   const [touched, setTouched] = useState({})
 
@@ -46,7 +36,6 @@ export default function SignUp({ canContinue = true, inviteLink, positionTitle }
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) err.email = 'Please enter a valid email address.'
     if (!form.fullName.trim()) err.fullName = 'Full name is required.'
     if (!form.experienceYears) err.experienceYears = 'Work experience is required.'
-    if (!form.socialLink.trim()) err.socialLink = 'Social link is required.'
     return err
   }
 
@@ -56,7 +45,7 @@ export default function SignUp({ canContinue = true, inviteLink, positionTitle }
     e.preventDefault()
     const err = validate()
     setErrors(err)
-    setTouched({ email: true, fullName: true, experienceYears: true, socialLink: true })
+    setTouched({ email: true, fullName: true, experienceYears: true })
     if (Object.keys(err).length > 0) return
 
     const candidate = { ...form, agreed: false, registeredAt: new Date().toISOString() }
@@ -181,49 +170,6 @@ export default function SignUp({ canContinue = true, inviteLink, positionTitle }
               {getError('experienceYears') && (
                 <span className={styles.error}>{errors.experienceYears}</span>
               )}
-            </div>
-
-            <div className={styles.field}>
-              <label htmlFor="socialLink">
-                Social Links (LinkedIn, Twitter, ...) <span className={styles.required}>*</span>
-              </label>
-              <input
-                id="socialLink"
-                name="socialLink"
-                type="url"
-                placeholder="Enter your social link"
-                value={form.socialLink}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                className={getError('socialLink') ? styles.inputError : ''}
-                autoComplete="url"
-              />
-              {getError('socialLink') && <span className={styles.error}>{errors.socialLink}</span>}
-            </div>
-
-            <div className={styles.demoSection}>
-              <h3 className={styles.demoTitle}>Demographic information (optional)</h3>
-              <p className={styles.demoDisclaimer}>
-                This information is confidential and used only to support our diversity and inclusion efforts.
-              </p>
-              <div className={styles.field}>
-                <label htmlFor="gender">Gender</label>
-                <select
-                  id="gender"
-                  name="gender"
-                  value={form.gender}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  className={getError('gender') ? styles.inputError : ''}
-                >
-                  {GENDERS.map((opt) => (
-                    <option key={opt.value || 'empty'} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-                {getError('gender') && <span className={styles.error}>{errors.gender}</span>}
-              </div>
             </div>
 
             <button

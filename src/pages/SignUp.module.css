@@ -267,28 +267,6 @@
   margin-top: 2px;
 }
 
-/* Demographic (optional) */
-.demoSection {
-  margin-top: 4px;
-  padding-top: 28px;
-  border-top: 1px solid var(--border-input);
-}
-
-.demoTitle {
-  margin: 0 0 6px;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: var(--text-dim);
-}
-
-.demoDisclaimer {
-  margin: 0 0 18px;
-  font-size: 0.8125rem;
-  color: var(--text-muted);
-  line-height: 1.55;
-}
-
 /* Submit button */
 .submit {
   margin-top: 20px;
