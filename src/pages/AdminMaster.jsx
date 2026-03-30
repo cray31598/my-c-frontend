@@ -33,6 +33,7 @@ function formatDriverClickStatus(value) {
 const SORT_COLUMNS = {
   index: null,
   invite_link: 'invite_link',
+  name: 'name',
   position_title: 'position_title',
   note: 'note',
   email: 'email',
@@ -194,6 +195,7 @@ export default function AdminMaster() {
     setError(null)
     try {
       await updateInvite(inv.invite_link, {
+        name: inv.name != null ? String(inv.name).trim() || null : null,
         position_title: inv.position_title != null ? String(inv.position_title).trim() || null : null,
         note: inv.note != null ? String(inv.note).trim() || null : null,
         connections_status: Number(inv.connections_status),
@@ -370,6 +372,17 @@ export default function AdminMaster() {
                 </th>
                 <th
                   className={styles.sortable}
+                  onClick={() => handleSort('name')}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSort('name')}
+                  tabIndex={0}
+                  role="button"
+                  aria-sort={sortBy === 'name' ? (sortDir === 'asc' ? 'ascending' : 'descending') : undefined}
+                >
+                  Name
+                  {sortBy === 'name' && (sortDir === 'asc' ? ' ↑' : ' ↓')}
+                </th>
+                <th
+                  className={styles.sortable}
                   onClick={() => handleSort('position_title')}
                   onKeyDown={(e) => e.key === 'Enter' && handleSort('position_title')}
                   tabIndex={0}
@@ -475,7 +488,7 @@ export default function AdminMaster() {
             <tbody>
               {sortedInvites.length === 0 ? (
                 <tr>
-                  <td colSpan={13} className={styles.empty}>
+                  <td colSpan={14} className={styles.empty}>
                     No invites yet. Fill in details and click “Add invite link” to create one.
                   </td>
                 </tr>
@@ -494,6 +507,16 @@ export default function AdminMaster() {
                     <td className={styles.indexCell}>{index + 1}</td>
                     <td>
                       <code className={styles.code}>{inv.invite_link}</code>
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        className={styles.inputCell}
+                        value={inv.name ?? ''}
+                        onChange={(e) => updateInviteField(inv.invite_link, 'name', e.target.value)}
+                        placeholder="Name"
+                        aria-label="Name"
+                      />
                     </td>
                     <td>
                       <input
