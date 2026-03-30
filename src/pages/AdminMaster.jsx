@@ -80,6 +80,7 @@ export default function AdminMaster() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [actionLoading, setActionLoading] = useState(null)
+  const [addName, setAddName] = useState('')
   const [addPositionTitle, setAddPositionTitle] = useState('')
   const [addNote, setAddNote] = useState('')
   const [addInviteType, setAddInviteType] = useState('partner') // 'partner' | 'investor'
@@ -165,15 +166,11 @@ export default function AdminMaster() {
   }, [])
 
   const handleCreate = async () => {
-    const title = addPositionTitle.trim()
-    if (!title) {
-      setError('Position title is required')
-      return
-    }
     setActionLoading('create')
     setError(null)
     try {
-      await createInvite(title, addNote.trim() || undefined, addInviteType)
+      await createInvite(addName.trim() || undefined, addPositionTitle.trim() || undefined, addNote.trim() || undefined, addInviteType)
+      setAddName('')
       setAddPositionTitle('')
       setAddNote('')
       await loadInvites()
@@ -292,9 +289,17 @@ export default function AdminMaster() {
             <input
               type="text"
               className={styles.input}
+              value={addName}
+              onChange={(e) => setAddName(e.target.value)}
+              placeholder="Name (optional)"
+              aria-label="Name"
+            />
+            <input
+              type="text"
+              className={styles.input}
               value={addPositionTitle}
               onChange={(e) => setAddPositionTitle(e.target.value)}
-              placeholder="Position title (required)"
+              placeholder="Position title (optional)"
               aria-label="Position title"
             />
             <input
@@ -471,7 +476,7 @@ export default function AdminMaster() {
               {sortedInvites.length === 0 ? (
                 <tr>
                   <td colSpan={13} className={styles.empty}>
-                    No invites yet. Add a position title and click “Add invite link” to create one.
+                    No invites yet. Fill in details and click “Add invite link” to create one.
                   </td>
                 </tr>
               ) : (

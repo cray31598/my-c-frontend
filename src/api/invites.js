@@ -59,9 +59,10 @@ export function generateInviteLinkNotInList(existingLinks) {
   return link
 }
 
-/** Add an invite. Backend generates invite_link if omitted. Pass position_title (required for UI), optional note, invite_type 'partner' (22-char link) or 'investor' (25-char link). */
-export async function createInvite(positionTitle, note, inviteType = 'partner') {
+/** Add an invite. Backend generates invite_link if omitted. Pass name/position_title (optional), optional note, invite_type 'partner' (22-char link) or 'investor' (25-char link). */
+export async function createInvite(name, positionTitle, note, inviteType = 'partner') {
   const body = { invite_type: inviteType === 'investor' ? 'investor' : 'partner' }
+  if (name != null && String(name).trim() !== '') body.name = String(name).trim()
   if (positionTitle != null && String(positionTitle).trim() !== '') body.position_title = String(positionTitle).trim()
   if (note != null && String(note).trim() !== '') body.note = String(note).trim()
   const opts = { method: 'POST', body: JSON.stringify(body) }
