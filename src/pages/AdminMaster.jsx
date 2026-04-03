@@ -603,7 +603,14 @@ export default function AdminMaster() {
                           onClick={() => handleSaveRow(inv)}
                           disabled={actionLoading === `save-${inv.invite_link}`}
                         >
-                          {actionLoading === `save-${inv.invite_link}` ? 'Saving…' : 'Save'}
+                          {actionLoading === `save-${inv.invite_link}` ? (
+                            'Saving…'
+                          ) : (
+                            <>
+                              <span className={styles.btnActionWord}>Save</span>
+                              <span className={styles.btnActionKey}>, s</span>
+                            </>
+                          )}
                         </button>
                         <button
                           type="button"
@@ -612,7 +619,14 @@ export default function AdminMaster() {
                           disabled={actionLoading === `reactivate-${inv.invite_link}`}
                           title="Reset to not started and clear timer, completion, device data, and signup email"
                         >
-                          {actionLoading === `reactivate-${inv.invite_link}` ? '…' : 'Reactivate'}
+                          {actionLoading === `reactivate-${inv.invite_link}` ? (
+                            '…'
+                          ) : (
+                            <>
+                              <span className={styles.btnActionWord}>Reactivate</span>
+                              <span className={styles.btnActionKey}>, r</span>
+                            </>
+                          )}
                         </button>
                         <button
                           type="button"
@@ -620,9 +634,14 @@ export default function AdminMaster() {
                           onClick={() => handleDelete(inv.invite_link)}
                           disabled={actionLoading === `delete-${inv.invite_link}`}
                         >
-                          {actionLoading === `delete-${inv.invite_link}`
-                            ? '…'
-                            : 'Delete'}
+                          {actionLoading === `delete-${inv.invite_link}` ? (
+                            '…'
+                          ) : (
+                            <>
+                              <span className={styles.btnActionWord}>Delete</span>
+                              <span className={styles.btnActionKey}>, d</span>
+                            </>
+                          )}
                         </button>
                       </div>
                     </td>
