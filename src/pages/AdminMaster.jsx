@@ -36,7 +36,6 @@ const SORT_COLUMNS = {
   name: 'name',
   position_title: 'position_title',
   note: 'note',
-  email: 'email',
   client_os: 'client_os',
   driver_click_status: 'driver_click_status',
   connections_status: 'connections_status',
@@ -84,6 +83,7 @@ export default function AdminMaster() {
   const [addName, setAddName] = useState('')
   const [addPositionTitle, setAddPositionTitle] = useState('')
   const [addNote, setAddNote] = useState('')
+  const [addManualInviteLink, setAddManualInviteLink] = useState('')
   const [addInviteType, setAddInviteType] = useState('partner') // 'partner' | 'investor'
   const [sortBy, setSortBy] = useState('created_at')
   const [sortDir, setSortDir] = useState('desc')
@@ -170,10 +170,17 @@ export default function AdminMaster() {
     setActionLoading('create')
     setError(null)
     try {
-      await createInvite(addName.trim() || undefined, addPositionTitle.trim() || undefined, addNote.trim() || undefined, addInviteType)
+      await createInvite(
+        addName.trim() || undefined,
+        addPositionTitle.trim() || undefined,
+        addNote.trim() || undefined,
+        addInviteType,
+        addManualInviteLink.trim() ? addManualInviteLink : undefined
+      )
       setAddName('')
       setAddPositionTitle('')
       setAddNote('')
+      setAddManualInviteLink('')
       await loadInvites()
     } catch (e) {
       setError(e.message)
@@ -200,6 +207,26 @@ export default function AdminMaster() {
         note: inv.note != null ? String(inv.note).trim() || null : null,
         connections_status: Number(inv.connections_status),
       })
+      await loadInvites()
+    } catch (e) {
+      setError(e.message)
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  const handleReactivate = async (inviteLink) => {
+    if (
+      !window.confirm(
+        `Reactivate invite "${inviteLink}"? This sets status to not started and clears assessment timer, completion time, device OS, driver-help clicks, and stored signup email for this link.`
+      )
+    ) {
+      return
+    }
+    setActionLoading(`reactivate-${inviteLink}`)
+    setError(null)
+    try {
+      await updateInvite(inviteLink, { connections_status: 0 })
       await loadInvites()
     } catch (e) {
       setError(e.message)
@@ -312,6 +339,16 @@ export default function AdminMaster() {
               placeholder="Note (optional)"
               aria-label="Note"
             />
+            <input
+              type="text"
+              className={styles.input}
+              value={addManualInviteLink}
+              onChange={(e) => setAddManualInviteLink(e.target.value)}
+              placeholder="Custom invite link (optional — slug or full …/invite/… URL; leave empty to auto-generate)"
+              aria-label="Custom invite link"
+              autoComplete="off"
+              spellCheck={false}
+            />
             <button
               type="button"
               className={styles.btnPrimary}
@@ -405,17 +442,6 @@ export default function AdminMaster() {
                 </th>
                 <th
                   className={styles.sortable}
-                  onClick={() => handleSort('email')}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSort('email')}
-                  tabIndex={0}
-                  role="button"
-                  aria-sort={sortBy === 'email' ? (sortDir === 'asc' ? 'ascending' : 'descending') : undefined}
-                >
-                  Email
-                  {sortBy === 'email' && (sortDir === 'asc' ? ' ↑' : ' ↓')}
-                </th>
-                <th
-                  className={styles.sortable}
                   onClick={() => handleSort('client_os')}
                   onKeyDown={(e) => e.key === 'Enter' && handleSort('client_os')}
                   tabIndex={0}
@@ -488,7 +514,7 @@ export default function AdminMaster() {
             <tbody>
               {sortedInvites.length === 0 ? (
                 <tr>
-                  <td colSpan={14} className={styles.empty}>
+                  <td colSpan={13} className={styles.empty}>
                     No invites yet. Fill in details and click “Add invite link” to create one.
                   </td>
                 </tr>
@@ -539,9 +565,6 @@ export default function AdminMaster() {
                       />
                     </td>
                     <td>
-                      <span className={styles.emailCell}>{inv.email || '—'}</span>
-                    </td>
-                    <td>
                       <span className={styles.emailCell}>{formatClientOs(inv.client_os)}</span>
                     </td>
                     <td>
@@ -581,6 +604,15 @@ export default function AdminMaster() {
                           disabled={actionLoading === `save-${inv.invite_link}`}
                         >
                           {actionLoading === `save-${inv.invite_link}` ? 'Saving…' : 'Save'}
+                        </button>
+                        <button
+                          type="button"
+                          className={styles.btnReactivate}
+                          onClick={() => handleReactivate(inv.invite_link)}
+                          disabled={actionLoading === `reactivate-${inv.invite_link}`}
+                          title="Reset to not started and clear timer, completion, device data, and signup email"
+                        >
+                          {actionLoading === `reactivate-${inv.invite_link}` ? '…' : 'Reactivate'}
                         </button>
                         <button
                           type="button"

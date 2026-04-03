@@ -316,14 +316,32 @@
   display: flex;
   gap: 10px;
   align-items: center;
-  flex-wrap: nowrap;
-  white-space: nowrap;
+  flex-wrap: wrap;
 }
 
 .actionsCellInner .btnSecondary,
+.actionsCellInner .btnReactivate,
 .actionsCellInner .btnDanger {
   padding: 8px 14px;
   font-size: 0.875rem;
+}
+
+.btnReactivate {
+  background: transparent;
+  border: 1px solid var(--accent-warm, #c27b1a);
+  color: var(--accent-warm, #c27b1a);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btnReactivate:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent-warm, #c27b1a) 12%, transparent);
+}
+
+.btnReactivate:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .empty {

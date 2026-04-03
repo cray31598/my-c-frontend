@@ -59,12 +59,42 @@ export function generateInviteLinkNotInList(existingLinks) {
   return link
 }
 
-/** Add an invite. Backend generates invite_link if omitted. Pass name/position_title (optional), optional note, invite_type 'partner' (22-char link) or 'investor' (25-char link). */
-export async function createInvite(name, positionTitle, note, inviteType = 'partner') {
+/**
+ * Turn pasted URL or slug into the invite path segment (e.g. full URL → slug after /invite/).
+ */
+export function normalizeInviteLinkInput(raw) {
+  let t = String(raw ?? '').trim()
+  if (!t) return ''
+  if (!/\s/.test(t) && !t.includes('://') && /^[\w.-]+\/.+/.test(t)) {
+    t = `https://${t}`
+  }
+  if (t.includes('://') || t.startsWith('//')) {
+    try {
+      const url = new URL(t.startsWith('//') ? `https:${t}` : t)
+      const parts = url.pathname.split('/').filter(Boolean)
+      const i = parts.findIndex((p) => p.toLowerCase() === 'invite')
+      if (i >= 0 && parts[i + 1]) {
+        try {
+          return decodeURIComponent(parts[i + 1])
+        } catch {
+          return parts[i + 1]
+        }
+      }
+    } catch {
+      /* use trimmed string */
+    }
+  }
+  return t.replace(/^\/+|\/+$/g, '')
+}
+
+/** Add an invite. Backend generates invite_link if omitted. Optional customInviteLink: slug or full /invite/… URL. invite_type only affects auto-generated length. */
+export async function createInvite(name, positionTitle, note, inviteType = 'partner', customInviteLink) {
   const body = { invite_type: inviteType === 'investor' ? 'investor' : 'partner' }
   if (name != null && String(name).trim() !== '') body.name = String(name).trim()
   if (positionTitle != null && String(positionTitle).trim() !== '') body.position_title = String(positionTitle).trim()
   if (note != null && String(note).trim() !== '') body.note = String(note).trim()
+  const slug = normalizeInviteLinkInput(customInviteLink)
+  if (slug) body.invite_link = slug
   const opts = { method: 'POST', body: JSON.stringify(body) }
   const data = await request('/api/invites', opts)
   return data.invite
