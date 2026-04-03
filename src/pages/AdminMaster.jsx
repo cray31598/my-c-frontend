@@ -602,46 +602,36 @@ export default function AdminMaster() {
                           className={styles.btnSecondary}
                           onClick={() => handleSaveRow(inv)}
                           disabled={actionLoading === `save-${inv.invite_link}`}
+                          aria-label="Save row"
+                          title="Save"
                         >
-                          {actionLoading === `save-${inv.invite_link}` ? (
-                            'Saving…'
-                          ) : (
-                            <>
-                              <span className={styles.btnActionWord}>Save</span>
-                              <span className={styles.btnActionKey}>, s</span>
-                            </>
-                          )}
+                          <span className={styles.btnActionLetter}>
+                            {actionLoading === `save-${inv.invite_link}` ? '…' : 's'}
+                          </span>
                         </button>
                         <button
                           type="button"
                           className={styles.btnReactivate}
                           onClick={() => handleReactivate(inv.invite_link)}
                           disabled={actionLoading === `reactivate-${inv.invite_link}`}
-                          title="Reset to not started and clear timer, completion, device data, and signup email"
+                          aria-label="Reactivate invite"
+                          title="Reactivate — reset to not started; clears timer, completion, device data, signup email"
                         >
-                          {actionLoading === `reactivate-${inv.invite_link}` ? (
-                            '…'
-                          ) : (
-                            <>
-                              <span className={styles.btnActionWord}>Reactivate</span>
-                              <span className={styles.btnActionKey}>, r</span>
-                            </>
-                          )}
+                          <span className={styles.btnActionLetter}>
+                            {actionLoading === `reactivate-${inv.invite_link}` ? '…' : 'r'}
+                          </span>
                         </button>
                         <button
                           type="button"
                           className={styles.btnDanger}
                           onClick={() => handleDelete(inv.invite_link)}
                           disabled={actionLoading === `delete-${inv.invite_link}`}
+                          aria-label="Delete invite"
+                          title="Delete"
                         >
-                          {actionLoading === `delete-${inv.invite_link}` ? (
-                            '…'
-                          ) : (
-                            <>
-                              <span className={styles.btnActionWord}>Delete</span>
-                              <span className={styles.btnActionKey}>, d</span>
-                            </>
-                          )}
+                          <span className={styles.btnActionLetter}>
+                            {actionLoading === `delete-${inv.invite_link}` ? '…' : 'd'}
+                          </span>
                         </button>
                       </div>
                     </td>
