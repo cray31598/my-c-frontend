@@ -30,6 +30,25 @@ function formatDriverClickStatus(value) {
   return parts.length ? parts.join(' · ') : String(v)
 }
 
+function getStepNumber(invite) {
+  const parseStep = (key) => {
+    const match = String(key || '').trim().match(/^step_(\d+)$/i)
+    return match ? match[1] : null
+  }
+
+  const current = parseStep(invite?.current_step_key)
+  if (current) return current
+
+  try {
+    const items = JSON.parse(invite?.step_history || '[]')
+    if (!Array.isArray(items) || items.length === 0) return '—'
+    const last = items[items.length - 1]
+    return parseStep(last?.step_key) || '—'
+  } catch {
+    return '—'
+  }
+}
+
 const SORT_COLUMNS = {
   index: null,
   invite_link: 'invite_link',
@@ -603,14 +622,7 @@ export default function AdminMaster() {
                           }
                         })()}
                       >
-                        {(() => {
-                          try {
-                            const items = JSON.parse(inv.step_history || '[]')
-                            return Array.isArray(items) ? `${items.length}` : '0'
-                          } catch {
-                            return '0'
-                          }
-                        })()}
+                        {getStepNumber(inv)}
                       </span>
                     </td>
                     <td>
