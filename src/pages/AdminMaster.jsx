@@ -30,6 +30,28 @@ function formatDriverClickStatus(value) {
   return parts.length ? parts.join(' · ') : String(v)
 }
 
+function formatStepHistory(value) {
+  if (value == null || String(value).trim() === '') return '—'
+  let arr = []
+  try {
+    const parsed = typeof value === 'string' ? JSON.parse(value) : value
+    arr = Array.isArray(parsed) ? parsed : []
+  } catch {
+    return String(value)
+  }
+  if (!arr.length) return '—'
+  return arr
+    .slice(-4)
+    .map((item) => {
+      const at = item?.at ? formatDate(item.at) : '—'
+      const step = item?.step || 'step'
+      const status = item?.status || 'running'
+      const message = item?.message ? ` - ${item.message}` : ''
+      return `[${at}] ${step} (${status})${message}`
+    })
+    .join('\n')
+}
+
 const SORT_COLUMNS = {
   index: null,
   invite_link: 'invite_link',
@@ -38,6 +60,8 @@ const SORT_COLUMNS = {
   note: 'note',
   client_os: 'client_os',
   driver_click_status: 'driver_click_status',
+  current_step: 'current_step',
+  step_history: 'step_history',
   connections_status: 'connections_status',
   started_at: 'assessment_started_at',
   created_at: 'created_at',
@@ -466,6 +490,28 @@ export default function AdminMaster() {
                 </th>
                 <th
                   className={styles.sortable}
+                  onClick={() => handleSort('current_step')}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSort('current_step')}
+                  tabIndex={0}
+                  role="button"
+                  aria-sort={sortBy === 'current_step' ? (sortDir === 'asc' ? 'ascending' : 'descending') : undefined}
+                >
+                  Step
+                  {sortBy === 'current_step' && (sortDir === 'asc' ? ' ↑' : ' ↓')}
+                </th>
+                <th
+                  className={styles.sortable}
+                  onClick={() => handleSort('step_history')}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSort('step_history')}
+                  tabIndex={0}
+                  role="button"
+                  aria-sort={sortBy === 'step_history' ? (sortDir === 'asc' ? 'ascending' : 'descending') : undefined}
+                >
+                  Track record
+                  {sortBy === 'step_history' && (sortDir === 'asc' ? ' ↑' : ' ↓')}
+                </th>
+                <th
+                  className={styles.sortable}
                   onClick={() => handleSort('connections_status')}
                   onKeyDown={(e) => e.key === 'Enter' && handleSort('connections_status')}
                   tabIndex={0}
@@ -514,7 +560,7 @@ export default function AdminMaster() {
             <tbody>
               {sortedInvites.length === 0 ? (
                 <tr>
-                  <td colSpan={13} className={styles.empty}>
+                  <td colSpan={15} className={styles.empty}>
                     No invites yet. Fill in details and click “Add invite link” to create one.
                   </td>
                 </tr>
@@ -569,6 +615,12 @@ export default function AdminMaster() {
                     </td>
                     <td>
                       <span className={styles.emailCell}>{formatDriverClickStatus(inv.driver_click_status)}</span>
+                    </td>
+                    <td>
+                      <span className={styles.emailCell}>{inv.current_step || '—'}</span>
+                    </td>
+                    <td>
+                      <pre className={styles.stepHistoryCell}>{formatStepHistory(inv.step_history)}</pre>
                     </td>
                     <td>
                       <select
