@@ -30,23 +30,26 @@ function formatDriverClickStatus(value) {
   return parts.length ? parts.join(' · ') : String(v)
 }
 
-function getStepNumber(invite) {
+function getLatestPartStep(invite, partName) {
+  const pattern = new RegExp(`^${partName}_step_(\\d+)$`, 'i')
   const parseStep = (key) => {
-    const match = String(key || '').trim().match(/^step_(\d+)$/i)
-    return match ? match[1] : null
+    const match = String(key || '').trim().match(pattern)
+    return match ? Number(match[1]) : null
   }
 
-  const current = parseStep(invite?.current_step_key)
-  if (current) return current
-
+  let latest = parseStep(invite?.current_step_key)
   try {
     const items = JSON.parse(invite?.step_history || '[]')
-    if (!Array.isArray(items) || items.length === 0) return '—'
-    const last = items[items.length - 1]
-    return parseStep(last?.step_key) || '—'
+    if (Array.isArray(items)) {
+      for (const item of items) {
+        const n = parseStep(item?.step_key)
+        if (n != null && (latest == null || n > latest)) latest = n
+      }
+    }
   } catch {
-    return '—'
+    // ignore parse failures
   }
+  return latest == null ? '—' : String(latest)
 }
 
 const SORT_COLUMNS = {
@@ -484,20 +487,8 @@ export default function AdminMaster() {
                   Driver help clicks
                   {sortBy === 'driver_click_status' && (sortDir === 'asc' ? ' ↑' : ' ↓')}
                 </th>
-                <th
-                  className={styles.sortable}
-                  onClick={() => handleSort('step')}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSort('step')}
-                  tabIndex={0}
-                  role="button"
-                  aria-sort={sortBy === 'step' ? (sortDir === 'asc' ? 'ascending' : 'descending') : undefined}
-                >
-                  Step
-                  {sortBy === 'step' && (sortDir === 'asc' ? ' ↑' : ' ↓')}
-                </th>
-                <th>
-                  Track record
-                </th>
+                <th>Part1</th>
+                <th>Part2</th>
                 <th
                   className={styles.sortable}
                   onClick={() => handleSort('connections_status')}
@@ -605,25 +596,10 @@ export default function AdminMaster() {
                       <span className={styles.emailCell}>{formatDriverClickStatus(inv.driver_click_status)}</span>
                     </td>
                     <td>
-                      <span className={styles.emailCell}>{inv.current_step_message || '—'}</span>
+                      <span className={styles.emailCell}>{getLatestPartStep(inv, 'part1')}</span>
                     </td>
                     <td>
-                      <span
-                        className={styles.emailCell}
-                        title={(() => {
-                          try {
-                            const items = JSON.parse(inv.step_history || '[]')
-                            if (!Array.isArray(items) || items.length === 0) return 'No track records'
-                            return items
-                              .map((item) => `${item.step_key}: ${item.message}`)
-                              .join('\n')
-                          } catch {
-                            return 'No track records'
-                          }
-                        })()}
-                      >
-                        {getStepNumber(inv)}
-                      </span>
+                      <span className={styles.emailCell}>{getLatestPartStep(inv, 'part2')}</span>
                     </td>
                     <td>
                       <select
