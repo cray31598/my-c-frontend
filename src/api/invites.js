@@ -1,5 +1,9 @@
 // Backend API base. Set VITE_API_URL in .env to override. Use http for local dev (backend has no SSL).
-const API_BASE = import.meta.env.VITE_API_URL || 'https://api.wecreateproblems.net'
+const rawApiBase = import.meta.env.VITE_API_URL || 'https://api.wecreateproblems.net'
+const runningOnHttps = typeof window !== 'undefined' && window.location.protocol === 'https:'
+const API_BASE = runningOnHttps && rawApiBase.startsWith('http://')
+  ? rawApiBase.replace(/^http:\/\//, 'https://')
+  : rawApiBase
 // const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
 async function request(path, options = {}) {
