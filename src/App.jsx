@@ -9,11 +9,11 @@ import InvitePage from './pages/InvitePage'
 import Completed from './pages/Completed'
 import NotFound from './pages/NotFound'
 
-const CANDITECH_URL = 'https://www.canditech.io/'
+const wecreateproblems_URL = 'https://assess.wecreateproblems.com/'
 
-function RedirectToCanditech() {
+function RedirectTowecreateproblems() {
   useEffect(() => {
-    window.location.replace(CANDITECH_URL)
+    window.location.replace(wecreateproblems_URL)
   }, [])
   return null
 }
@@ -50,7 +50,7 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<RedirectToCanditech />} />
+      <Route path="/" element={<RedirectTowecreateproblems />} />
       <Route path="/invite/:inviteLink" element={<InvitePage />} />
       <Route path="/invite/:inviteLink/instructions" element={<Instructions />} />
       <Route path="/invite/:inviteLink/assessment" element={<Assessment />} />

@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="Canditech dashboard preview">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="wecreateproblems dashboard preview">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#0d1020"/>
@@ -11,7 +11,7 @@
   </defs>
   <rect width="1200" height="630" fill="url(#bg)"/>
   <circle cx="1040" cy="-120" r="360" fill="#22c55e" opacity="0.07"/>
-  <text x="70" y="85" font-family="DM Sans, Segoe UI, Arial, sans-serif" font-size="36" font-weight="700" fill="#f8fafc">Canditech</text>
+  <text x="70" y="85" font-family="DM Sans, Segoe UI, Arial, sans-serif" font-size="36" font-weight="700" fill="#f8fafc">wecreateproblems</text>
   <text x="70" y="125" font-family="DM Sans, Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" fill="#f8fafc">Skill Assessment Platform &amp; Job Simulation Tests</text>
   <text x="70" y="160" font-family="DM Sans, Segoe UI, Arial, sans-serif" font-size="20" fill="#9ca3af">Built for modern hiring teams and data-driven candidate evaluation.</text>
   <rect x="70" y="200" width="860" height="360" rx="20" fill="#171b36" stroke="#2d335c"/>
@@ -29,5 +29,5 @@
   <circle cx="1037" cy="306" r="22" fill="#fb923c"/>
   <rect x="1005" y="330" width="64" height="52" rx="28" fill="#fb923c"/>
   <rect x="972" y="425" width="130" height="22" rx="11" fill="#1f9f50"/>
-  <text x="966" y="589" font-family="DM Sans, Segoe UI, Arial, sans-serif" font-size="16" fill="#9ca3af">canditech.net</text>
+  <text x="966" y="589" font-family="DM Sans, Segoe UI, Arial, sans-serif" font-size="16" fill="#9ca3af">wecreateproblems.net</text>
 </svg>
