@@ -5,23 +5,44 @@ const httpsSafeBase = runningOnHttps && rawApiBase.startsWith('http://')
   ? rawApiBase.replace(/^http:\/\//, 'https://')
   : rawApiBase
 const API_BASE = httpsSafeBase.replace(/\/+$/, '')
+const DEFAULT_PROD_API_BASE = 'https://api.wecreateproblems.net'
 // const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
 async function request(path, options = {}) {
-  const url = `${API_BASE}${path}`
+  const primaryBase = API_BASE
+  const fallbackBase = primaryBase === DEFAULT_PROD_API_BASE ? null : DEFAULT_PROD_API_BASE
+  return requestWithBase(path, options, primaryBase, fallbackBase)
+}
+
+async function requestWithBase(path, options, base, fallbackBase) {
+  const url = `${base}${path}`
   const res = await fetch(url, {
     headers: { 'Content-Type': 'application/json', ...options.headers },
     ...options,
   })
+  const contentType = (res.headers.get('content-type') || '').toLowerCase()
+  const isJson = contentType.includes('application/json')
+  const isHtml = contentType.includes('text/html')
+
+  if (isHtml && fallbackBase) {
+    return requestWithBase(path, options, fallbackBase, null)
+  }
+
   if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: res.statusText }))
-    const msg = err?.error || res.statusText
+    const err = isJson ? await res.json().catch(() => ({ error: res.statusText })) : null
+    const msg = err?.error || (!isJson && isHtml ? 'Backend returned HTML instead of JSON' : res.statusText)
     if (res.status === 404) {
       throw new Error(`${msg}. Is the backend running? Start it: cd backend && npm run dev`)
     }
     throw new Error(msg)
   }
   if (res.status === 204) return null
+  if (!isJson) {
+    if (fallbackBase) {
+      return requestWithBase(path, options, fallbackBase, null)
+    }
+    throw new Error('Backend returned a non-JSON response')
+  }
   return res.json()
 }
 
